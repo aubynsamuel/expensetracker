@@ -28,8 +28,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
+import com.aubynsamuel.expensetracker.data.model.Expense
+import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import com.aubynsamuel.expensetracker.presentation.components.DrawerContent
-import com.aubynsamuel.expensetracker.presentation.components.HomeContent
+import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
+import com.aubynsamuel.expensetracker.presentation.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,6 +49,12 @@ fun MainScreen() {
     var currentScreen by remember { mutableStateOf(Screens.HOME_SCREEN) }
     val decay = rememberSplineBasedDecay<Float>()
     val context = LocalContext.current
+    val database = remember { ExpenseDatabase.getDatabase(context) }
+    val repository = remember { ExpenseRepository(database.expenseDao()) }
+    val expensesViewModel: ExpensesViewModel = viewModel(
+        factory = ViewModelFactory(repository)
+    )
+    var expenseToEdit by remember { mutableStateOf<Expense?>(null) }
 
     val draggableState = rememberDraggableState { dragAmount ->
         scope.launch {
@@ -114,9 +125,7 @@ fun MainScreen() {
                 )
         )
 
-        HomeContent(
-            currentScreen = currentScreen,
-            toggleDrawer = { toggleDrawer() },
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .offset(x = with(LocalDensity.current) { translationX.value.toDp() })
@@ -156,11 +165,52 @@ fun MainScreen() {
                     this.clip = true
                     this.spotShadowColor = shadowColor
                 }
-        )
+        ) {
+            when (currentScreen) {
+                Screens.HOME_SCREEN -> HomeScreenContent(
+                    toggleDrawer = { toggleDrawer() },
+                    onAddExpense = {
+                        currentScreen = Screens.ADD_EXPENSE_SCREEN
+                    },
+                    onEditExpense = { expense ->
+                        expenseToEdit = expense
+                        currentScreen = Screens.EDIT_EXPENSE_SCREEN
+                    },
+                    expensesViewModel = expensesViewModel
+                )
+
+                Screens.EXPENSES_SCREEN -> ExpensesScreenContent(
+                    expensesViewModel = expensesViewModel,
+                    onEditExpense = { expense ->
+                        expenseToEdit = expense
+                        currentScreen = Screens.EDIT_EXPENSE_SCREEN
+                    },
+                    onDeleteExpense = { expense ->
+                        expensesViewModel.deleteExpense(expense)
+                    }
+                )
+
+                Screens.ADD_EXPENSE_SCREEN -> AddExpenseScreen(onAddExpense = { amount, category, description, date ->
+                    expensesViewModel.addExpense(amount, category, description, date)
+                    currentScreen = Screens.HOME_SCREEN
+                })
+
+                Screens.EDIT_EXPENSE_SCREEN -> {
+                    expenseToEdit?.let { expense ->
+                        EditExpenseScreen(expense = expense, onUpdateExpense = { updatedExpense ->
+                            expensesViewModel.updateExpense(updatedExpense)
+                            currentScreen = Screens.HOME_SCREEN
+                        })
+                    }
+                }
+            }
+        }
     }
 }
 
 object Screens {
     const val HOME_SCREEN = "HOME_SCREEN"
     const val EXPENSES_SCREEN = "EXPENSES_SCREEN"
+    const val ADD_EXPENSE_SCREEN = "ADD_EXPENSE_SCREEN"
+    const val EDIT_EXPENSE_SCREEN = "EDIT_EXPENSE_SCREEN"
 }
