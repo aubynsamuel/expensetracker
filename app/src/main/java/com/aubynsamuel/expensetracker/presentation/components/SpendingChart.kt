@@ -23,14 +23,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.Expense
 import ir.ehsannarmani.compose_charts.PieChart
 import ir.ehsannarmani.compose_charts.models.Pie
+import java.util.Locale
 
 @Composable
 fun SpendingChart(expenses: List<Expense>) {
-    val spendingByCategory = remember(expenses) {
+    val spendingByCategory = remember {
         expenses.groupBy { expense -> expense.category }
             .mapValues { groupedExpenses -> groupedExpenses.value.sumOf { it.amount } }
     }
@@ -58,17 +60,42 @@ fun SpendingChart(expenses: List<Expense>) {
         )
     }
 
-    var pieData by remember(spendingByCategory) {
-        mutableStateOf(
-            spendingByCategory.entries.mapIndexed { index, (category, amount) ->
-                Pie(
-                    label = category,
-                    data = amount,
-                    color = categoryColors[index % categoryColors.size],
-                    selectedColor = categoryColors[index % categoryColors.size].copy(alpha = 0.7f)
-                )
-            }
-        )
+    // Sort categories by amount and take top 6
+    val sortedCategories = remember(spendingByCategory) {
+        spendingByCategory.entries.sortedByDescending { it.value }
+    }
+
+    val top6Categories = remember(sortedCategories) {
+        sortedCategories.take(6)
+    }
+
+    val othersAmount = remember(sortedCategories) {
+        sortedCategories.drop(6).sumOf { it.value }
+    }
+
+    // Create pie data with top 6 + others
+    var pieData by remember(top6Categories, othersAmount) {
+        val topPies = top6Categories.mapIndexed { index, (category, amount) ->
+            Pie(
+                label = category,
+                data = amount,
+                color = categoryColors[index % categoryColors.size],
+                selectedColor = categoryColors[index % categoryColors.size].copy(alpha = 0.7f)
+            )
+        }
+
+        val finalPies = if (othersAmount > 0) {
+            topPies + Pie(
+                label = "Others",
+                data = othersAmount,
+                color = Color(0xFF9E9E9E), // Gray for Others
+                selectedColor = Color(0xFF9E9E9E).copy(alpha = 0.7f)
+            )
+        } else {
+            topPies
+        }
+
+        mutableStateOf(finalPies)
     }
 
     Column(
@@ -86,16 +113,6 @@ fun SpendingChart(expenses: List<Expense>) {
         )
 
         Row {
-//            LineChart(
-//                data = expenses.mapIndexed { index, expense ->
-//                    Line(
-//                        values = listOf(expense.amount),
-//                        color = Brush.linearGradient(colors = categoryColors),
-//                        label = expense.title
-//                    )
-//                }
-//            )
-
             PieChart(
                 modifier = Modifier
                     .size(200.dp)
@@ -121,7 +138,7 @@ fun SpendingChart(expenses: List<Expense>) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Legend/Summary
+            // Legend/Summary - Top 6 + Others
             Column {
                 pieData.forEach { pie ->
                     val percentage = (pie.data / totalSpending * 100).toFloat()
@@ -134,7 +151,8 @@ fun SpendingChart(expenses: List<Expense>) {
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.weight(1f)
                         ) {
                             Box(
                                 modifier = Modifier
@@ -144,15 +162,22 @@ fun SpendingChart(expenses: List<Expense>) {
                             pie.label?.let {
                                 Text(
                                     text = it,
-                                    style = MaterialTheme.typography.bodyMedium
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                         }
-//                    Text(
-//                        text = "$%.2f (%.1f%%)".format(pie.data, percentage),
-//                        style = MaterialTheme.typography.bodyMedium,
-//                        fontWeight = FontWeight.Medium
-//                    )
+
+                        Text(
+                            text = String.format(
+                                Locale.getDefault(),
+                                "%.1f%%",
+                                percentage
+                            ),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium,
+                        )
                     }
                 }
             }
