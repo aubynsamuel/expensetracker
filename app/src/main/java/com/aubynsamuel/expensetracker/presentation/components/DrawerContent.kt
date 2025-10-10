@@ -29,12 +29,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.aubynsamuel.expensetracker.presentation.screens.Screens
+import com.aubynsamuel.expensetracker.presentation.screens.Screen
 
 @Composable
 fun DrawerContent(
-    changeScreen: (String) -> Unit,
-    currentScreen: String,
+    changeScreen: (Screen) -> Unit,
+    currentScreen: Screen,
     width: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -90,14 +90,14 @@ fun DrawerContent(
             DrawerItem(
                 label = "Home",
                 icon = Icons.Default.Garage,
-                selected = currentScreen == Screens.HOME_SCREEN,
-                onClick = { changeScreen(Screens.HOME_SCREEN) }
+                selected = currentScreen == Screen.HomeScreen,
+                onClick = { changeScreen(Screen.HomeScreen) }
             )
             DrawerItem(
                 label = "Expenses",
                 icon = Icons.Default.Poll,
-                selected = currentScreen == Screens.EXPENSES_SCREEN,
-                onClick = { changeScreen(Screens.EXPENSES_SCREEN) }
+                selected = currentScreen == Screen.ExpensesScreen,
+                onClick = { changeScreen(Screen.ExpensesScreen) }
             )
         }
 

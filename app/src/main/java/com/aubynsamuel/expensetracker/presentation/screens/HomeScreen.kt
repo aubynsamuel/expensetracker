@@ -21,12 +21,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,11 +33,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.presentation.components.ExpenseItem
+import com.aubynsamuel.expensetracker.presentation.screens.Screen
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import java.util.Locale
 
@@ -49,12 +50,13 @@ fun HomeScreenContent(
     onAddExpense: () -> Unit,
     onEditExpense: (Expense) -> Unit,
     expensesViewModel: ExpensesViewModel,
+    backStack: NavBackStack<NavKey>,
 ) {
     val expensesList by expensesViewModel.expensesList.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
     var expenseToDelete by remember { mutableStateOf<Expense?>(null) }
     // This scrollBehavior is correct
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+//    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     if (showDeleteDialog) {
         AlertDialog(
@@ -80,16 +82,16 @@ fun HomeScreenContent(
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            LargeTopAppBar(
+            TopAppBar(
                 title = { Text("Home") },
                 navigationIcon = {
                     IconButton(onClick = toggleDrawer) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
                 },
-                scrollBehavior = scrollBehavior
+//                scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
@@ -109,7 +111,7 @@ fun HomeScreenContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(2.dp))
             }
 
             item {
@@ -137,6 +139,7 @@ fun HomeScreenContent(
 
             item {
                 SpendingChart(expenses = expensesList)
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             item {
@@ -155,7 +158,7 @@ fun HomeScreenContent(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable(onClick = {})
+                        modifier = Modifier.clickable(onClick = { backStack.add(Screen.ExpensesScreen) })
                     )
                 }
             }
