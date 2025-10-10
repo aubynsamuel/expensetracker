@@ -25,7 +25,6 @@ fun EditExpenseScreen(expense: Expense, onUpdateExpense: (Expense) -> Unit) {
     var amount by remember { mutableStateOf(expense.amount.toString()) }
     var category by remember { mutableStateOf(expense.category) }
     var description by remember { mutableStateOf(expense.title) }
-    var date by remember { mutableStateOf(expense.date) }
 
     Scaffold(
         topBar = {
@@ -54,18 +53,12 @@ fun EditExpenseScreen(expense: Expense, onUpdateExpense: (Expense) -> Unit) {
                 onValueChange = { description = it },
                 label = { Text("Description") }
             )
-            TextField(
-                value = date,
-                onValueChange = { date = it },
-                label = { Text("Date") }
-            )
             Button(onClick = {
                 onUpdateExpense(
                     expense.copy(
                         title = description,
                         amount = amount.toDouble(),
-                        category = category,
-                        date = date
+                        category = category
                     )
                 )
             }) {

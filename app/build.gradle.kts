@@ -54,6 +54,10 @@ dependencies {
     // Material Icons
     implementation(libs.androidx.material.icons.extended)
 
+    implementation(libs.vico.compose.m3)
+
+    implementation(libs.compose.charts)
+
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.animation.core)
@@ -75,6 +79,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
