@@ -1,5 +1,6 @@
 package com.aubynsamuel.expensetracker.presentation.screens
 
+import HomeScreenContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.rememberSplineBasedDecay
@@ -29,6 +30,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aubynsamuel.expensetracker.data.local.DataStoreManager
 import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
 import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
@@ -50,7 +52,8 @@ fun MainScreen() {
     val decay = rememberSplineBasedDecay<Float>()
     val context = LocalContext.current
     val database = remember { ExpenseDatabase.getDatabase(context) }
-    val repository = remember { ExpenseRepository(database.expenseDao()) }
+    val dataStoreManager = remember { DataStoreManager(context) }
+    val repository = remember { ExpenseRepository(database.expenseDao(), dataStoreManager) }
     val expensesViewModel: ExpensesViewModel = viewModel(
         factory = ViewModelFactory(repository)
     )
@@ -94,7 +97,6 @@ fun MainScreen() {
             },
             currentScreen = currentScreen,
             width = drawerWidth,
-            dragAmountPx = dragAmountPx,
             modifier = Modifier
                 .fillMaxHeight()
                 .background(Color.Green)
@@ -187,13 +189,17 @@ fun MainScreen() {
                     },
                     onDeleteExpense = { expense ->
                         expensesViewModel.deleteExpense(expense)
-                    }
+                    },
+                    toggleDrawer = { toggleDrawer() }
                 )
 
-                Screens.ADD_EXPENSE_SCREEN -> AddExpenseScreen(onAddExpense = { amount, category, description, date ->
-                    expensesViewModel.addExpense(amount, category, description, date)
-                    currentScreen = Screens.HOME_SCREEN
-                })
+                Screens.ADD_EXPENSE_SCREEN -> AddExpenseScreen(
+                    viewModel = expensesViewModel,
+                    onAddExpense = { amount, category, description, date ->
+                        expensesViewModel.addExpense(amount, category, description, date)
+                        currentScreen = Screens.HOME_SCREEN
+                    }
+                )
 
                 Screens.EDIT_EXPENSE_SCREEN -> {
                     expenseToEdit?.let { expense ->

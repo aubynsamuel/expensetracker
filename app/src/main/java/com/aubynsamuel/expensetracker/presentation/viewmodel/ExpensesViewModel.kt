@@ -2,16 +2,14 @@ package com.aubynsamuel.expensetracker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aubynsamuel.expensetracker.data.local.dummyExpenses
 import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 class ExpensesViewModel(private val repository: ExpenseRepository) : ViewModel() {
 
@@ -21,7 +19,23 @@ class ExpensesViewModel(private val repository: ExpenseRepository) : ViewModel()
         initialValue = emptyList()
     )
 
-    fun addExpense(amount: String, category: String, description: String, date: String) {
+    val categories: StateFlow<List<String>> = repository.categories.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+//    init {
+//        insertSampleData()
+//    }
+
+    fun insertSampleData() {
+        viewModelScope.launch {
+            repository.insertAll(dummyExpenses)
+        }
+    }
+
+    fun addExpense(amount: String, category: String, description: String, date: Long) {
         viewModelScope.launch {
             repository.insert(
                 Expense(
@@ -46,43 +60,68 @@ class ExpensesViewModel(private val repository: ExpenseRepository) : ViewModel()
         }
     }
 
+    fun addCategory(category: String) {
+        viewModelScope.launch {
+            repository.addCategory(category)
+        }
+    }
+
     fun filterExpensesByToday(expenses: List<Expense>): List<Expense> {
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val today = sdf.format(Date())
-        return expenses.filter { it.date == today }
+        val calendar = Calendar.getInstance()
+        val startOfDay = calendar.apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        val endOfDay = calendar.apply {
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.timeInMillis
+
+        return expenses.filter { it.date in startOfDay..endOfDay }
     }
 
     fun filterExpensesByThisWeek(expenses: List<Expense>): List<Expense> {
         val calendar = Calendar.getInstance()
         calendar.firstDayOfWeek = Calendar.MONDAY
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        val startOfWeek = calendar.time
-        calendar.add(Calendar.DAY_OF_WEEK, 6)
-        val endOfWeek = calendar.time
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val startOfWeek = calendar.timeInMillis
 
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return expenses.filter { expense ->
-            val expenseDate = sdf.parse(expense.date)
-            expenseDate != null && !expenseDate.before(startOfWeek) && !expenseDate.after(endOfWeek)
-        }
+        calendar.add(Calendar.DAY_OF_WEEK, 6)
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
+        calendar.set(Calendar.MILLISECOND, 999)
+        val endOfWeek = calendar.timeInMillis
+
+        return expenses.filter { it.date in startOfWeek..endOfWeek }
     }
 
     fun filterExpensesByThisMonth(expenses: List<Expense>): List<Expense> {
         val calendar = Calendar.getInstance()
-        val currentMonth = calendar.get(Calendar.MONTH)
-        val currentYear = calendar.get(Calendar.YEAR)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val startOfMonth = calendar.timeInMillis
 
-        return expenses.filter { expense ->
-            val expenseCalendar = Calendar.getInstance()
-            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val expenseDate = sdf.parse(expense.date)
-            if (expenseDate != null) {
-                expenseCalendar.time = expenseDate
-                expenseCalendar.get(Calendar.MONTH) == currentMonth && expenseCalendar.get(Calendar.YEAR) == currentYear
-            } else {
-                false
-            }
-        }
+        calendar.add(Calendar.MONTH, 1)
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
+        calendar.set(Calendar.MILLISECOND, 999)
+        val endOfMonth = calendar.timeInMillis
+
+        return expenses.filter { it.date in startOfMonth..endOfMonth }
     }
 }
 
