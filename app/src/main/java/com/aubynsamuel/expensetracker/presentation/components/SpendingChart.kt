@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.aubynsamuel.expensetracker.data.local.dummyExpenses
 import com.aubynsamuel.expensetracker.data.model.Expense
 import ir.ehsannarmani.compose_charts.PieChart
 import ir.ehsannarmani.compose_charts.models.Pie
@@ -32,7 +34,7 @@ import java.util.Locale
 
 @Composable
 fun SpendingChart(expenses: List<Expense>) {
-    val spendingByCategory = remember {
+    val spendingByCategory = remember(expenses) {
         expenses.groupBy { expense -> expense.category }
             .mapValues { groupedExpenses -> groupedExpenses.value.sumOf { it.amount } }
     }
@@ -109,10 +111,10 @@ fun SpendingChart(expenses: List<Expense>) {
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 6.dp)
         )
 
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             PieChart(
                 modifier = Modifier
                     .size(200.dp)
@@ -183,4 +185,13 @@ fun SpendingChart(expenses: List<Expense>) {
             }
         }
     }
+}
+
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PreviewSpendingChart() {
+    SpendingChart(
+        expenses = dummyExpenses
+    )
 }
