@@ -1,3 +1,4 @@
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,31 +32,43 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.aubynsamuel.expensetracker.MainActivity
 import com.aubynsamuel.expensetracker.data.model.Expense
+import com.aubynsamuel.expensetracker.presentation.components.AddExpenseDialog
+import com.aubynsamuel.expensetracker.presentation.components.EditExpenseDialog
 import com.aubynsamuel.expensetracker.presentation.components.ExpenseItem
-import com.aubynsamuel.expensetracker.presentation.screens.Screen
+import com.aubynsamuel.expensetracker.presentation.navigation.Screen
+import com.aubynsamuel.expensetracker.presentation.utils.navigate
+import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
     toggleDrawer: () -> Unit,
-    onAddExpense: () -> Unit,
-    onEditExpense: (Expense) -> Unit,
     expensesViewModel: ExpensesViewModel,
     backStack: NavBackStack<NavKey>,
 ) {
     val expensesList by expensesViewModel.expensesList.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
     var expenseToDelete by remember { mutableStateOf<Expense?>(null) }
-    // This scrollBehavior is correct
+    var showAddExpenseDialog by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    var backButtonPressed by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    var showEditExpenseDialog by remember { mutableStateOf(false) }
+    var expenseToEdit by remember { mutableStateOf<Expense?>(null) }
 //    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     if (showDeleteDialog) {
@@ -81,6 +94,37 @@ fun HomeScreenContent(
         )
     }
 
+    if (showEditExpenseDialog) {
+        expenseToEdit?.let {
+            EditExpenseDialog(
+                expense = it,
+                onUpdateExpense = { expense -> expensesViewModel.updateExpense(expense) },
+                onDismiss = { showEditExpenseDialog = false }
+            )
+        }
+    }
+
+    if (showAddExpenseDialog) {
+        AddExpenseDialog(
+            viewModel = expensesViewModel,
+            onDismiss = { showAddExpenseDialog = false }
+        )
+    }
+
+    BackHandler(enabled = true, onBack = {
+        if (backButtonPressed) {
+            backStack.clear()
+            (context as? MainActivity)?.finish()
+        } else {
+            backButtonPressed = true
+            showToast(context, "Press again to exit")
+            coroutineScope.launch {
+                delay(2000)
+                backButtonPressed = false
+            }
+        }
+    })
+
     Scaffold(
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -96,7 +140,7 @@ fun HomeScreenContent(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onAddExpense() },
+                onClick = { showAddExpenseDialog = true },
                 modifier = Modifier.offset(x = (-10).dp, y = (-20).dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Expense")
@@ -124,7 +168,7 @@ fun HomeScreenContent(
                     Column(modifier = Modifier.padding(16.dp)) {
                         val totalAmount = expensesList.sumOf { it.amount }
                         Text(
-                            text = "Total Balance",
+                            text = "Total Expense",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -158,7 +202,7 @@ fun HomeScreenContent(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable(onClick = { backStack.add(Screen.ExpensesScreen) })
+                        modifier = Modifier.clickable(onClick = { backStack.navigate(Screen.ExpensesScreen) })
                     )
                 }
             }
@@ -166,7 +210,10 @@ fun HomeScreenContent(
             items(expensesList.take(10), key = { it.id }) { expense ->
                 ExpenseItem(
                     expense = expense,
-                    onEdit = { onEditExpense(it) },
+                    onEdit = {
+                        expenseToEdit = it
+                        showEditExpenseDialog = true
+                    },
                     onDelete = {
                         expenseToDelete = it
                         showDeleteDialog = true

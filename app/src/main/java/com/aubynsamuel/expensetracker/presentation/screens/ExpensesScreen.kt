@@ -14,9 +14,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -29,36 +32,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.Expense
+import com.aubynsamuel.expensetracker.presentation.components.EditExpenseDialog
 import com.aubynsamuel.expensetracker.presentation.components.ExpenseItem
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpensesScreenContent(
+fun ExpensesScreen(
     expensesViewModel: ExpensesViewModel,
-    onEditExpense: (Expense) -> Unit,
-    onDeleteExpense: (Expense) -> Unit,
     toggleDrawer: () -> Unit,
 ) {
     val expensesList by expensesViewModel.expensesList.collectAsState()
-    var selectedTypeFilter by remember { mutableStateOf("All") }
     var selectedDateFilter by remember { mutableStateOf("All") }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var expenseToDelete by remember { mutableStateOf<Expense?>(null) }
+    var showEditExpenseDialog by remember { mutableStateOf(false) }
+    var expenseToEdit by remember { mutableStateOf<Expense?>(null) }
 //    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
-    val filteredExpensesByType = when (selectedTypeFilter) {
-        "Income" -> expensesList.filter { it.amount > 0 }
-        "Expense" -> expensesList.filter { it.amount < 0 }
-        else -> expensesList
-    }
-
-    val filteredExpenses = when (selectedDateFilter) {
-        "Today" -> expensesViewModel.filterExpensesByToday(filteredExpensesByType)
-        "Week" -> expensesViewModel.filterExpensesByThisWeek(filteredExpensesByType)
-        "Month" -> expensesViewModel.filterExpensesByThisMonth(filteredExpensesByType)
-        else -> filteredExpensesByType
-    }
 
     if (showDeleteDialog) {
         AlertDialog(
@@ -83,6 +73,16 @@ fun ExpensesScreenContent(
         )
     }
 
+    if (showEditExpenseDialog) {
+        expenseToEdit?.let {
+            EditExpenseDialog(
+                expense = it,
+                onUpdateExpense = { expense -> expensesViewModel.updateExpense(expense) },
+                onDismiss = { showEditExpenseDialog = false }
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -104,27 +104,6 @@ fun ExpensesScreenContent(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Filter Chips
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                FilterChip(
-                    selected = selectedTypeFilter == "All",
-                    onClick = { selectedTypeFilter = "All" },
-                    label = { Text("All") }
-                )
-                FilterChip(
-                    selected = selectedTypeFilter == "Income",
-                    onClick = { selectedTypeFilter = "Income" },
-                    label = { Text("Income") }
-                )
-                FilterChip(
-                    selected = selectedTypeFilter == "Expense",
-                    onClick = { selectedTypeFilter = "Expense" },
-                    label = { Text("Expense") }
-                )
-            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -132,22 +111,26 @@ fun ExpensesScreenContent(
                 FilterChip(
                     selected = selectedDateFilter == "All",
                     onClick = { selectedDateFilter = "All" },
-                    label = { Text("All") }
+                    label = { Text("All") },
+                    colors = filterChipColors()
                 )
                 FilterChip(
                     selected = selectedDateFilter == "Today",
                     onClick = { selectedDateFilter = "Today" },
-                    label = { Text("Today") }
+                    label = { Text("Today") },
+                    colors = filterChipColors()
                 )
                 FilterChip(
                     selected = selectedDateFilter == "Week",
                     onClick = { selectedDateFilter = "Week" },
-                    label = { Text("This Week") }
+                    label = { Text("This Week") },
+                    colors = filterChipColors()
                 )
                 FilterChip(
                     selected = selectedDateFilter == "Month",
                     onClick = { selectedDateFilter = "Month" },
-                    label = { Text("This Month") }
+                    label = { Text("This Month") },
+                    colors = filterChipColors()
                 )
             }
 
@@ -155,10 +138,13 @@ fun ExpensesScreenContent(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(filteredExpenses) { expense ->
+                items(expensesList) { expense ->
                     ExpenseItem(
                         expense = expense,
-                        onEdit = { onEditExpense(it) },
+                        onEdit = {
+                            expenseToEdit = it
+                            showEditExpenseDialog = true
+                        },
                         onDelete = {
                             expenseToDelete = it
                             showDeleteDialog = true
@@ -170,3 +156,11 @@ fun ExpensesScreenContent(
     }
 }
 
+@Composable
+fun filterChipColors(): SelectableChipColors {
+    return FilterChipDefaults.filterChipColors()
+        .copy(
+            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+}

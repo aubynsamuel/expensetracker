@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.aubynsamuel.expensetracker.presentation.screens.MainScreen
+import com.aubynsamuel.expensetracker.presentation.navigation.Navigation
 import com.aubynsamuel.expensetracker.ui.theme.ExpenseTrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ExpenseTrackerTheme {
-                MainScreen()
+                Navigation()
             }
         }
     }
