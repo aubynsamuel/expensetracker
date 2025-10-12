@@ -1,5 +1,6 @@
 package com.aubynsamuel.expensetracker.presentation.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.Expense
@@ -68,7 +68,7 @@ fun ExpenseItem(expense: Expense, onEdit: (Expense) -> Unit, onDelete: (Expense)
                     ) {
                         Text(
                             text = expense.category.first().toString(),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -86,12 +86,13 @@ fun ExpenseItem(expense: Expense, onEdit: (Expense) -> Unit, onDelete: (Expense)
                     }
                 }
                 Text(
-                    text = "${expense.amount}",
+                    text = "$${expense.amount}",
                     fontWeight = FontWeight.Bold,
-                    color = if (expense.amount > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                    color = if (expense.amount > 0) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.error
                 )
             }
-            if (expanded) {
+            AnimatedVisibility(expanded) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

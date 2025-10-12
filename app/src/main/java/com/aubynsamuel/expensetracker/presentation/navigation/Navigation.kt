@@ -1,12 +1,10 @@
-package com.aubynsamuel.expensetracker.presentation.screens
+package com.aubynsamuel.expensetracker.presentation.navigation
 
 import HomeScreenContent
 import android.util.Log
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.rememberSplineBasedDecay
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -22,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -34,30 +31,28 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.aubynsamuel.expensetracker.data.local.DataStoreManager
 import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
-import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import com.aubynsamuel.expensetracker.presentation.components.DrawerContent
+import com.aubynsamuel.expensetracker.presentation.screens.ExpensesScreen
+import com.aubynsamuel.expensetracker.presentation.utils.navigate
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun Navigation() {
     val drawerWidth = 280.dp
     val drawerWidthPx =
         with(LocalDensity.current) { drawerWidth.toPx() }
     val scope = rememberCoroutineScope()
     val translationX = remember { Animatable(0f) }
     translationX.updateBounds(0f, drawerWidthPx)
-    var currentScreen by remember { mutableStateOf<Screen>(Screen.HomeScreen) }
     val decay = rememberSplineBasedDecay<Float>()
     val context = LocalContext.current
     val database = remember { ExpenseDatabase.getDatabase(context) }
@@ -104,10 +99,10 @@ fun MainScreen() {
 
         DrawerContent(
             changeScreen = { screen ->
-                backStack.add(screen)
+                backStack.navigate(screen)
                 toggleDrawer()
             },
-            currentScreen = currentScreen,
+            currentScreen = backStack.last(),
             width = drawerWidth,
             modifier = Modifier
                 .fillMaxHeight()
@@ -182,84 +177,24 @@ fun MainScreen() {
         ) {
 
             NavDisplay(
-                transitionSpec = {
-//                    slideInHorizontally(initialOffsetX = { it }) togetherWith
-//                            slideOutHorizontally(targetOffsetX = { -it })
-
-                    slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Right
-                    ).togetherWith(
-                        slideOutOfContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Left
-                        )
-                    )
-                },
                 backStack = backStack,
                 onBack = { backStack.removeLastOrNull() },
                 entryProvider = entryProvider {
                     entry<Screen.HomeScreen> {
                         HomeScreenContent(
-                            backStack = backStack,
                             toggleDrawer = { toggleDrawer() },
-                            onAddExpense = {
-                                backStack.add(Screen.AddExpenseScreen)
-                            },
-                            onEditExpense = { expense ->
-                                backStack.add(Screen.EditExpenseScreen(expense))
-                            },
-                            expensesViewModel = expensesViewModel
+                            expensesViewModel = expensesViewModel,
+                            backStack = backStack
                         )
                     }
 
                     entry<Screen.ExpensesScreen> {
-                        ExpensesScreenContent(
+                        ExpensesScreen(
                             expensesViewModel = expensesViewModel,
-                            onEditExpense = { expense ->
-                                backStack.add(Screen.EditExpenseScreen(expense))
-                            },
-                            onDeleteExpense = { expense ->
-                                expensesViewModel.deleteExpense(expense)
-                            },
-                            toggleDrawer = { toggleDrawer() }
-                        )
-                    }
-
-                    entry<Screen.AddExpenseScreen> {
-                        AddExpenseScreen(
-                            viewModel = expensesViewModel,
-                            onAddExpense = { amount, category, description, date ->
-                                expensesViewModel.addExpense(amount, category, description, date)
-                                backStack.removeLastOrNull()
-                            }
-                        )
-                    }
-
-                    entry<Screen.EditExpenseScreen> { key ->
-                        EditExpenseScreen(
-                            expense = key.expense,
-                            onUpdateExpense = { updatedExpense ->
-                                expensesViewModel.updateExpense(updatedExpense)
-                                backStack.removeLastOrNull()
-                            }
-                        )
+                        ) { toggleDrawer() }
                     }
                 }
             )
         }
     }
-}
-
-
-sealed class Screen : NavKey {
-    @Serializable
-    object HomeScreen : Screen()
-
-    @Serializable
-    object ExpensesScreen : Screen()
-
-    @Serializable
-    object AddExpenseScreen : Screen()
-
-    @Serializable
-    data class EditExpenseScreen(val expense: Expense) : Screen()
 }
