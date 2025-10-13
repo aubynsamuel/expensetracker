@@ -239,6 +239,14 @@ fun Navigation() {
                             drawerState = drawerState
                         )
                     }
+
+                    entry<Screen.SettingsScreen> {
+                        SettingsScreen(
+                            viewModel = settingsViewModel,
+                            toggleDrawer = { toggleDrawer() },
+                            drawerState = drawerState
+                        )
+                    }
                 }
             )
         }

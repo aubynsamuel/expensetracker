@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.map
 
 class ExpenseRepository(
     private val expenseDao: ExpenseDao,
-    private val dataStoreManager: DataStoreManager,
+    val dataStoreManager: DataStoreManager,
 ) {
 
     val allExpenses: Flow<List<Expense>> = expenseDao.getAllExpenses()
