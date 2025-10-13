@@ -115,7 +115,6 @@ fun HomeScreenContent(
 
     BackHandler(enabled = true, onBack = {
         if (drawerState == DrawerState.Opened) {
-            showToast(context, "Closing Drawer")
             toggleDrawer()
         } else {
             if (backButtonPressed) {

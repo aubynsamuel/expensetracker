@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
-import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
 import kotlinx.coroutines.Job
 
@@ -34,13 +33,8 @@ fun SettingsScreen(
     val context = LocalContext.current
 
     BackHandler(
-        enabled = true,
-        onBack = {
-            if (drawerState == DrawerState.Opened) {
-                showToast(context, "Closing Drawer")
-                toggleDrawer()
-            }
-        }
+        enabled = drawerState == DrawerState.Opened,
+        onBack = { toggleDrawer() }
     )
 
     Scaffold(
