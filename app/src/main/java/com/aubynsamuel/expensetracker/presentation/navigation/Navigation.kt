@@ -2,9 +2,13 @@ package com.aubynsamuel.expensetracker.presentation.navigation
 
 import HomeScreenContent
 import android.util.Log
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.calculateTargetValue
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.rememberSplineBasedDecay
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -15,16 +19,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.motionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -39,17 +45,19 @@ import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import com.aubynsamuel.expensetracker.presentation.components.DrawerContent
 import com.aubynsamuel.expensetracker.presentation.screens.ExpensesScreen
+import com.aubynsamuel.expensetracker.presentation.screens.SettingsScreen
 import com.aubynsamuel.expensetracker.presentation.utils.navigate
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
+import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Navigation() {
+    val density = LocalDensity.current
     val drawerWidth = 280.dp
-    val drawerWidthPx =
-        with(LocalDensity.current) { drawerWidth.toPx() }
+    val drawerWidthPx = with(density) { drawerWidth.toPx() }
     val scope = rememberCoroutineScope()
     val translationX = remember { Animatable(0f) }
     translationX.updateBounds(0f, drawerWidthPx)
@@ -61,6 +69,9 @@ fun Navigation() {
     val expensesViewModel: ExpensesViewModel = viewModel(
         factory = ViewModelFactory(repository)
     )
+    val settingsViewModel: SettingsViewModel = viewModel(
+        factory = ViewModelFactory(repository)
+    )
     val draggableState = rememberDraggableState { dragAmount ->
         scope.launch {
             translationX.snapTo(translationX.value + dragAmount)
@@ -68,20 +79,25 @@ fun Navigation() {
     }
     val shadowColor = MaterialTheme.colorScheme.onBackground
     val backStack = rememberNavBackStack(Screen.HomeScreen)
+    val motionScheme = motionScheme
+    var drawerState by remember {
+        mutableStateOf(DrawerState.Closed)
+    }
 
     fun toggleDrawer() =
         scope.launch {
             if (translationX.value == drawerWidthPx) {
                 translationX.animateTo(0f)
+                drawerState = DrawerState.Closed
             } else {
                 translationX.animateTo(drawerWidthPx)
+                drawerState = DrawerState.Opened
             }
         }
 
-    LaunchedEffect(backStack) {
-        Log.d("BackStackMonitor", backStack.toString())
+    LaunchedEffect(drawerState.name) {
+        Log.d("BackStackMonitor", drawerState.name)
     }
-
 
     Box(
         modifier = Modifier
@@ -106,7 +122,6 @@ fun Navigation() {
             width = drawerWidth,
             modifier = Modifier
                 .fillMaxHeight()
-                .background(Color.Green)
                 .draggable(
                     state = drawerDraggableState,
                     orientation = Orientation.Horizontal,
@@ -129,6 +144,11 @@ fun Navigation() {
                             } else {
                                 translationX.animateTo(targetX, initialVelocity = velocity)
                             }
+                            drawerState = if (targetX == drawerWidthPx) {
+                                DrawerState.Opened
+                            } else {
+                                DrawerState.Closed
+                            }
                         }
                     }
                 )
@@ -137,7 +157,7 @@ fun Navigation() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .offset(x = with(LocalDensity.current) { translationX.value.toDp() })
+                .offset(x = with(density) { translationX.value.toDp() })
                 .draggable(
                     state = draggableState,
                     orientation = Orientation.Horizontal,
@@ -160,6 +180,11 @@ fun Navigation() {
                             } else {
                                 translationX.animateTo(targetX, initialVelocity = velocity)
                             }
+                            drawerState = if (targetX == drawerWidthPx) {
+                                DrawerState.Opened
+                            } else {
+                                DrawerState.Closed
+                            }
                         }
                     }
                 )
@@ -175,23 +200,44 @@ fun Navigation() {
                     this.spotShadowColor = shadowColor
                 }
         ) {
-
             NavDisplay(
                 backStack = backStack,
                 onBack = { backStack.removeLastOrNull() },
+                transitionSpec = {
+                    ContentTransform(
+                        fadeIn(motionScheme.defaultEffectsSpec()),
+                        fadeOut(motionScheme.defaultEffectsSpec())
+                    )
+                },
+                popTransitionSpec = {
+                    ContentTransform(
+                        fadeIn(motionScheme.defaultEffectsSpec()),
+                        fadeOut(motionScheme.defaultEffectsSpec())
+                    )
+                },
+                predictivePopTransitionSpec = {
+                    ContentTransform(
+                        fadeIn(motionScheme.defaultEffectsSpec()),
+                        fadeOut(motionScheme.defaultEffectsSpec()) +
+                                scaleOut(targetScale = 0.7f),
+                    )
+                },
                 entryProvider = entryProvider {
                     entry<Screen.HomeScreen> {
                         HomeScreenContent(
                             toggleDrawer = { toggleDrawer() },
                             expensesViewModel = expensesViewModel,
-                            backStack = backStack
+                            backStack = backStack,
+                            drawerState = drawerState
                         )
                     }
 
                     entry<Screen.ExpensesScreen> {
                         ExpensesScreen(
                             expensesViewModel = expensesViewModel,
-                        ) { toggleDrawer() }
+                            toggleDrawer = { toggleDrawer() },
+                            drawerState = drawerState
+                        )
                     }
                 }
             )

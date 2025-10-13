@@ -1,5 +1,6 @@
 package com.aubynsamuel.expensetracker.presentation.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.FilterChipDefaults.filterChipColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,10 +32,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.presentation.components.EditExpenseDialog
 import com.aubynsamuel.expensetracker.presentation.components.ExpenseItem
+import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
+import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,6 +46,7 @@ import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 fun ExpensesScreen(
     expensesViewModel: ExpensesViewModel,
     toggleDrawer: () -> Unit,
+    drawerState: DrawerState,
 ) {
     val expensesList by expensesViewModel.expensesList.collectAsState()
     var selectedDateFilter by remember { mutableStateOf("All") }
@@ -48,6 +54,7 @@ fun ExpensesScreen(
     var expenseToDelete by remember { mutableStateOf<Expense?>(null) }
     var showEditExpenseDialog by remember { mutableStateOf(false) }
     var expenseToEdit by remember { mutableStateOf<Expense?>(null) }
+    val context = LocalContext.current
 //    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     if (showDeleteDialog) {
@@ -82,6 +89,16 @@ fun ExpensesScreen(
             )
         }
     }
+
+    BackHandler(
+        enabled = true,
+        onBack = {
+            if (drawerState == DrawerState.Opened) {
+                showToast(context, "Closing Drawer")
+                toggleDrawer()
+            }
+        }
+    )
 
     Scaffold(
         topBar = {
