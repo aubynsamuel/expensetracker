@@ -69,7 +69,7 @@ fun AddExpenseDialog(
     var selectedCategory by remember { mutableStateOf("") }
     var date by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
-    val categories by viewModel.categories.collectAsState()
+    val expenseCategories by viewModel.expenseCategories.collectAsState()
 
     var expanded by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -237,7 +237,7 @@ fun AddExpenseDialog(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        categories.forEach { category ->
+                        expenseCategories.forEach { category ->
                             DropdownMenuItem(
                                 text = { Text(category) },
                                 onClick = {

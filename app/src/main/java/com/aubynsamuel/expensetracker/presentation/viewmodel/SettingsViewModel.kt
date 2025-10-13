@@ -13,7 +13,7 @@ class SettingsViewModel(private val sharedPreferencesManager: SharedPreferencesM
 
     val isDarkMode: StateFlow<Boolean> = sharedPreferencesManager.isDarkMode.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.Eagerly,
         initialValue = false
     )
 
