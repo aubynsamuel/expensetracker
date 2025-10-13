@@ -10,6 +10,10 @@ class ViewModelFactory(private val repository: ExpenseRepository) : ViewModelPro
             @Suppress("UNCHECKED_CAST")
             return ExpensesViewModel(repository) as T
         }
+        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return SettingsViewModel(repository.dataStoreManager) as T
+        }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

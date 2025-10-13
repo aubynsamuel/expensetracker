@@ -9,4 +9,7 @@ sealed class Screen : NavKey {
 
     @Serializable
     object ExpensesScreen : NavKey
+
+    @Serializable
+    object SettingsScreen : NavKey
 }

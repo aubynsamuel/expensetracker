@@ -71,8 +71,8 @@ fun DrawerContent(
         DrawerItem(
             label = "Settings",
             icon = Icons.Default.Settings,
-            selected = false,
-            onClick = { /* TODO */ }
+            selected = currentScreen == Screen.SettingsScreen,
+            onClick = { changeScreen(Screen.SettingsScreen) }
         )
     }
 }
