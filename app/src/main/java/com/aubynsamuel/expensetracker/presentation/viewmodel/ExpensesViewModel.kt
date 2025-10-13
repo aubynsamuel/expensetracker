@@ -11,33 +11,29 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-class ExpensesViewModel(private val repository: ExpenseRepository) : ViewModel() {
+class ExpensesViewModel(private val expenseRepository: ExpenseRepository) : ViewModel() {
 
-    val expensesList: StateFlow<List<Expense>> = repository.allExpenses.stateIn(
+    val expensesList: StateFlow<List<Expense>> = expenseRepository.allExpenses.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
 
-    val categories: StateFlow<List<String>> = repository.categories.stateIn(
+    val expenseCategories: StateFlow<List<String>> = expenseRepository.expenseCategories.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
-
-//    init {
-//        insertSampleData()
-//    }
 
     fun insertSampleData() {
         viewModelScope.launch {
-            repository.insertAll(dummyExpenses)
+            expenseRepository.insertAll(dummyExpenses)
         }
     }
 
     fun addExpense(amount: String, category: String, description: String, date: Long) {
         viewModelScope.launch {
-            repository.insert(
+            expenseRepository.insert(
                 Expense(
                     title = description,
                     amount = amount.toDouble(),
@@ -50,19 +46,19 @@ class ExpensesViewModel(private val repository: ExpenseRepository) : ViewModel()
 
     fun updateExpense(expense: Expense) {
         viewModelScope.launch {
-            repository.update(expense)
+            expenseRepository.update(expense)
         }
     }
 
     fun deleteExpense(expense: Expense) {
         viewModelScope.launch {
-            repository.delete(expense)
+            expenseRepository.delete(expense)
         }
     }
 
     fun addCategory(category: String) {
         viewModelScope.launch {
-            repository.addCategory(category)
+            expenseRepository.addCategory(category)
         }
     }
 
