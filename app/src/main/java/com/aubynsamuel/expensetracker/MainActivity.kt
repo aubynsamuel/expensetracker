@@ -9,8 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.aubynsamuel.expensetracker.data.local.DataStoreManager
 import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
+import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import com.aubynsamuel.expensetracker.presentation.navigation.Navigation
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
@@ -23,9 +23,9 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val dataStoreManager = DataStoreManager(this)
+        val sharedPreferencesManager = SharedPreferencesManager(this)
         val database = ExpenseDatabase.getDatabase(this)
-        val expenseRepository = ExpenseRepository(database.expenseDao(), dataStoreManager)
+        val expenseRepository = ExpenseRepository(database.expenseDao(), sharedPreferencesManager)
         setContent {
             val settingsViewModel: SettingsViewModel = viewModel(
                 factory = ViewModelFactory(expenseRepository)

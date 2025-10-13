@@ -1,22 +1,22 @@
 package com.aubynsamuel.expensetracker.data.repository
 
-import com.aubynsamuel.expensetracker.data.local.DataStoreManager
 import com.aubynsamuel.expensetracker.data.local.ExpenseDao
+import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
 import com.aubynsamuel.expensetracker.data.model.Expense
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ExpenseRepository(
     private val expenseDao: ExpenseDao,
-    val dataStoreManager: DataStoreManager,
+    val sharedPreferencesManager: SharedPreferencesManager,
 ) {
 
     val allExpenses: Flow<List<Expense>> = expenseDao.getAllExpenses()
 
-    val categories: Flow<List<String>> = dataStoreManager.categories.map { it.toList() }
+    val categories: Flow<List<String>> = sharedPreferencesManager.categories.map { it.toList() }
 
-    suspend fun addCategory(category: String) {
-        dataStoreManager.addCategory(category)
+    fun addCategory(category: String) {
+        sharedPreferencesManager.addCategory(category)
     }
 
     suspend fun insertAll(expenses: List<Expense>) {
