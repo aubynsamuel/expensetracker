@@ -1,0 +1,136 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:drawable="@drawable/ic_splash_icon">
+
+    <!-- Receipt fade in and scale -->
+    <target android:name="receipt_group">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="600"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleX"
+                    android:valueFrom="0.8"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="600"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="scaleY"
+                    android:valueFrom="0.8"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="400"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"
+                    android:propertyName="alpha"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+            </set>
+        </aapt:attr>
+    </target>
+
+    <!-- Coin 1 - Enter from top right with spring effect -->
+    <target android:name="coin1_group">
+        <aapt:attr name="android:animation">
+            <set android:ordering="together">
+                <!-- Translate from top right -->
+                <objectAnimator
+                    android:duration="800"
+                    android:startOffset="400"
+                    android:interpolator="@android:interpolator/overshoot"
+                    android:propertyName="translateX"
+                    android:valueFrom="30"
+                    android:valueTo="0"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="800"
+                    android:startOffset="400"
+                    android:interpolator="@android:interpolator/overshoot"
+                    android:propertyName="translateY"
+                    android:valueFrom="-40"
+                    android:valueTo="0"
+                    android:valueType="floatType" />
+                <!-- Scale bounce -->
+                <objectAnimator
+                    android:duration="800"
+                    android:startOffset="400"
+                    android:interpolator="@android:interpolator/overshoot"
+                    android:propertyName="scaleX"
+                    android:valueFrom="0.3"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="800"
+                    android:startOffset="400"
+                    android:interpolator="@android:interpolator/overshoot"
+                    android:propertyName="scaleY"
+                    android:valueFrom="0.3"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+                <!-- Fade in -->
+                <objectAnimator
+                    android:duration="300"
+                    android:startOffset="400"
+                    android:interpolator="@android:interpolator/linear"
+                    android:propertyName="alpha"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+            </set>
+        </aapt:attr>
+    </target>
+
+    <!-- Coin 2 - Enter from top right with spring effect (delayed) -->
+    <target android:name="coin2_group">
+        <aapt:attr name="android:animation">
+            <set android:ordering="together">
+                <!-- Translate from top right -->
+                <objectAnimator
+                    android:duration="900"
+                    android:startOffset="550"
+                    android:interpolator="@android:interpolator/overshoot"
+                    android:propertyName="translateX"
+                    android:valueFrom="35"
+                    android:valueTo="0"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="900"
+                    android:startOffset="550"
+                    android:interpolator="@android:interpolator/overshoot"
+                    android:propertyName="translateY"
+                    android:valueFrom="-50"
+                    android:valueTo="0"
+                    android:valueType="floatType" />
+                <!-- Scale bounce -->
+                <objectAnimator
+                    android:duration="900"
+                    android:startOffset="550"
+                    android:interpolator="@android:interpolator/overshoot"
+                    android:propertyName="scaleX"
+                    android:valueFrom="0.3"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+                <objectAnimator
+                    android:duration="900"
+                    android:startOffset="550"
+                    android:interpolator="@android:interpolator/overshoot"
+                    android:propertyName="scaleY"
+                    android:valueFrom="0.3"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+                <!-- Fade in -->
+                <objectAnimator
+                    android:duration="300"
+                    android:startOffset="550"
+                    android:interpolator="@android:interpolator/linear"
+                    android:propertyName="alpha"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType" />
+            </set>
+        </aapt:attr>
+    </target>
+
+</animated-vector>
