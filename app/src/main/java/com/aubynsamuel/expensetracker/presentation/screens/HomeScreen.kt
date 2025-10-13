@@ -45,6 +45,7 @@ import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.presentation.components.AddExpenseDialog
 import com.aubynsamuel.expensetracker.presentation.components.EditExpenseDialog
 import com.aubynsamuel.expensetracker.presentation.components.ExpenseItem
+import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
 import com.aubynsamuel.expensetracker.presentation.navigation.Screen
 import com.aubynsamuel.expensetracker.presentation.utils.navigate
 import com.aubynsamuel.expensetracker.presentation.utils.showToast
@@ -59,6 +60,7 @@ fun HomeScreenContent(
     toggleDrawer: () -> Unit,
     expensesViewModel: ExpensesViewModel,
     backStack: NavBackStack<NavKey>,
+    drawerState: DrawerState,
 ) {
     val expensesList by expensesViewModel.expensesList.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -112,15 +114,20 @@ fun HomeScreenContent(
     }
 
     BackHandler(enabled = true, onBack = {
-        if (backButtonPressed) {
-            backStack.clear()
-            (context as? MainActivity)?.finish()
+        if (drawerState == DrawerState.Opened) {
+            showToast(context, "Closing Drawer")
+            toggleDrawer()
         } else {
-            backButtonPressed = true
-            showToast(context, "Press again to exit")
-            coroutineScope.launch {
-                delay(2000)
-                backButtonPressed = false
+            if (backButtonPressed) {
+                backStack.clear()
+                (context as? MainActivity)?.finish()
+            } else {
+                backButtonPressed = true
+                showToast(context, "Press again to exit")
+                coroutineScope.launch {
+                    delay(2000)
+                    backButtonPressed = false
+                }
             }
         }
     })

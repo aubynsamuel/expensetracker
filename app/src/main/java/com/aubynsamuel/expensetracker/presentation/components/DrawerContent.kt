@@ -35,7 +35,7 @@ fun DrawerContent(
         modifier = modifier
             .width(width)
             .fillMaxHeight()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 20.dp, vertical = 24.dp)
     ) {
         Spacer(modifier = Modifier.height(25.dp))
