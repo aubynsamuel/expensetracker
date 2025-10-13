@@ -1,6 +1,5 @@
 package com.aubynsamuel.expensetracker.presentation.navigation
 
-import HomeScreenContent
 import android.util.Log
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.Animatable
@@ -40,6 +39,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.aubynsamuel.expensetracker.presentation.components.DrawerContent
 import com.aubynsamuel.expensetracker.presentation.screens.ExpensesScreen
+import com.aubynsamuel.expensetracker.presentation.screens.HomeScreenContent
 import com.aubynsamuel.expensetracker.presentation.screens.SettingsScreen
 import com.aubynsamuel.expensetracker.presentation.utils.navigate
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel

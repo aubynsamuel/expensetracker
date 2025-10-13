@@ -45,7 +45,7 @@ fun ExpensesScreen(
     toggleDrawer: () -> Unit,
     drawerState: DrawerState,
 ) {
-    val expensesList by expensesViewModel.expensesList.collectAsState()
+    val expensesList by expensesViewModel.filteredExpensesList.collectAsState()
     var selectedDateFilter by remember { mutableStateOf("All") }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var expenseToDelete by remember { mutableStateOf<Expense?>(null) }
@@ -115,25 +115,37 @@ fun ExpensesScreen(
             ) {
                 FilterChip(
                     selected = selectedDateFilter == "All",
-                    onClick = { selectedDateFilter = "All" },
+                    onClick = {
+                        selectedDateFilter = "All"
+                        expensesViewModel.filterExpenses("All")
+                    },
                     label = { Text("All") },
                     colors = chipColors()
                 )
                 FilterChip(
                     selected = selectedDateFilter == "Today",
-                    onClick = { selectedDateFilter = "Today" },
+                    onClick = {
+                        selectedDateFilter = "Today"
+                        expensesViewModel.filterExpenses("Today")
+                    },
                     label = { Text("Today") },
                     colors = chipColors()
                 )
                 FilterChip(
                     selected = selectedDateFilter == "Week",
-                    onClick = { selectedDateFilter = "Week" },
+                    onClick = {
+                        selectedDateFilter = "Week"
+                        expensesViewModel.filterExpenses("Week")
+                    },
                     label = { Text("This Week") },
                     colors = chipColors()
                 )
                 FilterChip(
                     selected = selectedDateFilter == "Month",
-                    onClick = { selectedDateFilter = "Month" },
+                    onClick = {
+                        selectedDateFilter = "Month"
+                        expensesViewModel.filterExpenses("Month")
+                    },
                     label = { Text("This Month") },
                     colors = chipColors()
                 )
@@ -143,7 +155,7 @@ fun ExpensesScreen(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(expensesList) { expense ->
+                items(expensesList.sortedByDescending { it.date }) { expense ->
                     ExpenseItem(
                         expense = expense,
                         onEdit = {
