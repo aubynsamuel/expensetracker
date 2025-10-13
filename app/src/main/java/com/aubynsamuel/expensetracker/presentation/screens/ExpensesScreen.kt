@@ -38,7 +38,6 @@ import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.presentation.components.EditExpenseDialog
 import com.aubynsamuel.expensetracker.presentation.components.ExpenseItem
 import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
-import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,13 +90,8 @@ fun ExpensesScreen(
     }
 
     BackHandler(
-        enabled = true,
-        onBack = {
-            if (drawerState == DrawerState.Opened) {
-                showToast(context, "Closing Drawer")
-                toggleDrawer()
-            }
-        }
+        enabled = drawerState == DrawerState.Opened,
+        onBack = { toggleDrawer() }
     )
 
     Scaffold(
