@@ -71,7 +71,6 @@ fun HomeScreenContent(
     val context = LocalContext.current
     var showEditExpenseDialog by remember { mutableStateOf(false) }
     var expenseToEdit by remember { mutableStateOf<Expense?>(null) }
-//    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     if (showDeleteDialog) {
         AlertDialog(
@@ -132,7 +131,6 @@ fun HomeScreenContent(
     })
 
     Scaffold(
-//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = { Text("Home") },
@@ -141,7 +139,6 @@ fun HomeScreenContent(
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
                 },
-//                scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {

@@ -10,10 +10,9 @@ class ExpenseRepository(
     private val expenseDao: ExpenseDao,
     val sharedPreferencesManager: SharedPreferencesManager,
 ) {
-
     val allExpenses: Flow<List<Expense>> = expenseDao.getAllExpenses()
-
-    val categories: Flow<List<String>> = sharedPreferencesManager.categories.map { it.toList() }
+    val expenseCategories: Flow<List<String>> =
+        sharedPreferencesManager.categories.map { it.toList() }
 
     fun addCategory(category: String) {
         sharedPreferencesManager.addCategory(category)
