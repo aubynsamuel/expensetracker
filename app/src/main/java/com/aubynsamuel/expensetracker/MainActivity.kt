@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
 import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
@@ -17,10 +18,19 @@ import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ViewModelFactory
 import com.aubynsamuel.expensetracker.ui.theme.ExpenseTrackerTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    private var keepSplash = true // State to control splash screen visibility
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition { keepSplash }
+        lifecycleScope.launch {
+            delay(900)
+            keepSplash = false
+        }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val sharedPreferencesManager = SharedPreferencesManager(this)
