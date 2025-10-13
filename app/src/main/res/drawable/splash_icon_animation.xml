@@ -7,21 +7,21 @@
         <aapt:attr name="android:animation">
             <set>
                 <objectAnimator
-                    android:duration="600"
+                    android:duration="780"
                     android:interpolator="@android:interpolator/fast_out_slow_in"
                     android:propertyName="scaleX"
-                    android:valueFrom="0.8"
+                    android:valueFrom="0.7"
                     android:valueTo="1"
                     android:valueType="floatType" />
                 <objectAnimator
-                    android:duration="600"
+                    android:duration="780"
                     android:interpolator="@android:interpolator/fast_out_slow_in"
                     android:propertyName="scaleY"
-                    android:valueFrom="0.8"
+                    android:valueFrom="0.7"
                     android:valueTo="1"
                     android:valueType="floatType" />
                 <objectAnimator
-                    android:duration="400"
+                    android:duration="520"
                     android:interpolator="@android:interpolator/fast_out_slow_in"
                     android:propertyName="alpha"
                     android:valueFrom="0"
@@ -37,42 +37,42 @@
             <set android:ordering="together">
                 <!-- Translate from top right -->
                 <objectAnimator
-                    android:duration="800"
-                    android:startOffset="400"
+                    android:duration="1040"
+                    android:startOffset="520"
                     android:interpolator="@android:interpolator/overshoot"
                     android:propertyName="translateX"
-                    android:valueFrom="30"
+                    android:valueFrom="45"
                     android:valueTo="0"
                     android:valueType="floatType" />
                 <objectAnimator
-                    android:duration="800"
-                    android:startOffset="400"
+                    android:duration="1040"
+                    android:startOffset="520"
                     android:interpolator="@android:interpolator/overshoot"
                     android:propertyName="translateY"
-                    android:valueFrom="-40"
+                    android:valueFrom="-55"
                     android:valueTo="0"
                     android:valueType="floatType" />
                 <!-- Scale bounce -->
                 <objectAnimator
-                    android:duration="800"
-                    android:startOffset="400"
+                    android:duration="1040"
+                    android:startOffset="520"
                     android:interpolator="@android:interpolator/overshoot"
                     android:propertyName="scaleX"
-                    android:valueFrom="0.3"
+                    android:valueFrom="0.2"
                     android:valueTo="1"
                     android:valueType="floatType" />
                 <objectAnimator
-                    android:duration="800"
-                    android:startOffset="400"
+                    android:duration="1040"
+                    android:startOffset="520"
                     android:interpolator="@android:interpolator/overshoot"
                     android:propertyName="scaleY"
-                    android:valueFrom="0.3"
+                    android:valueFrom="0.2"
                     android:valueTo="1"
                     android:valueType="floatType" />
                 <!-- Fade in -->
                 <objectAnimator
-                    android:duration="300"
-                    android:startOffset="400"
+                    android:duration="390"
+                    android:startOffset="520"
                     android:interpolator="@android:interpolator/linear"
                     android:propertyName="alpha"
                     android:valueFrom="0"
@@ -88,42 +88,42 @@
             <set android:ordering="together">
                 <!-- Translate from top right -->
                 <objectAnimator
-                    android:duration="900"
-                    android:startOffset="550"
+                    android:duration="1170"
+                    android:startOffset="715"
                     android:interpolator="@android:interpolator/overshoot"
                     android:propertyName="translateX"
-                    android:valueFrom="35"
+                    android:valueFrom="50"
                     android:valueTo="0"
                     android:valueType="floatType" />
                 <objectAnimator
-                    android:duration="900"
-                    android:startOffset="550"
+                    android:duration="1170"
+                    android:startOffset="715"
                     android:interpolator="@android:interpolator/overshoot"
                     android:propertyName="translateY"
-                    android:valueFrom="-50"
+                    android:valueFrom="-65"
                     android:valueTo="0"
                     android:valueType="floatType" />
                 <!-- Scale bounce -->
                 <objectAnimator
-                    android:duration="900"
-                    android:startOffset="550"
+                    android:duration="1170"
+                    android:startOffset="715"
                     android:interpolator="@android:interpolator/overshoot"
                     android:propertyName="scaleX"
-                    android:valueFrom="0.3"
+                    android:valueFrom="0.2"
                     android:valueTo="1"
                     android:valueType="floatType" />
                 <objectAnimator
-                    android:duration="900"
-                    android:startOffset="550"
+                    android:duration="1170"
+                    android:startOffset="715"
                     android:interpolator="@android:interpolator/overshoot"
                     android:propertyName="scaleY"
-                    android:valueFrom="0.3"
+                    android:valueFrom="0.2"
                     android:valueTo="1"
                     android:valueType="floatType" />
                 <!-- Fade in -->
                 <objectAnimator
-                    android:duration="300"
-                    android:startOffset="550"
+                    android:duration="390"
+                    android:startOffset="715"
                     android:interpolator="@android:interpolator/linear"
                     android:propertyName="alpha"
                     android:valueFrom="0"
