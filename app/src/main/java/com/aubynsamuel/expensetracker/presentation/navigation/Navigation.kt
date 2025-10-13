@@ -32,29 +32,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.aubynsamuel.expensetracker.data.local.DataStoreManager
-import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
-import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import com.aubynsamuel.expensetracker.presentation.components.DrawerContent
 import com.aubynsamuel.expensetracker.presentation.screens.ExpensesScreen
 import com.aubynsamuel.expensetracker.presentation.screens.SettingsScreen
 import com.aubynsamuel.expensetracker.presentation.utils.navigate
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
-import com.aubynsamuel.expensetracker.presentation.viewmodel.ViewModelFactory
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun Navigation() {
+fun Navigation(
+    settingsViewModel: SettingsViewModel,
+    expensesViewModel: ExpensesViewModel,
+) {
     val density = LocalDensity.current
     val drawerWidth = 280.dp
     val drawerWidthPx = with(density) { drawerWidth.toPx() }
@@ -62,21 +59,13 @@ fun Navigation() {
     val translationX = remember { Animatable(0f) }
     translationX.updateBounds(0f, drawerWidthPx)
     val decay = rememberSplineBasedDecay<Float>()
-    val context = LocalContext.current
-    val database = remember { ExpenseDatabase.getDatabase(context) }
-    val dataStoreManager = remember { DataStoreManager(context) }
-    val repository = remember { ExpenseRepository(database.expenseDao(), dataStoreManager) }
-    val expensesViewModel: ExpensesViewModel = viewModel(
-        factory = ViewModelFactory(repository)
-    )
-    val settingsViewModel: SettingsViewModel = viewModel(
-        factory = ViewModelFactory(repository)
-    )
+
     val draggableState = rememberDraggableState { dragAmount ->
         scope.launch {
             translationX.snapTo(translationX.value + dragAmount)
         }
     }
+
     val shadowColor = MaterialTheme.colorScheme.onBackground
     val backStack = rememberNavBackStack(Screen.HomeScreen)
     val motionScheme = motionScheme
@@ -101,8 +90,8 @@ fun Navigation() {
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .fillMaxSize()
     ) {
         var dragAmountPx by remember { mutableFloatStateOf(0f) }
         val drawerDraggableState = rememberDraggableState { dragAmount ->
@@ -242,7 +231,7 @@ fun Navigation() {
 
                     entry<Screen.SettingsScreen> {
                         SettingsScreen(
-                            viewModel = settingsViewModel,
+                            settingsViewModel = settingsViewModel,
                             toggleDrawer = { toggleDrawer() },
                             drawerState = drawerState
                         )
