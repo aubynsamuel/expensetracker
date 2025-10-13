@@ -25,11 +25,11 @@ import kotlinx.coroutines.Job
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel,
+    settingsViewModel: SettingsViewModel,
     drawerState: DrawerState,
     toggleDrawer: () -> Job,
 ) {
-    val isDarkMode by viewModel.isDarkMode.collectAsState()
+    val isDarkMode by settingsViewModel.isDarkMode.collectAsState()
     val context = LocalContext.current
 
     BackHandler(
@@ -55,7 +55,7 @@ fun SettingsScreen(
                 Text(text = "Dark Mode", modifier = Modifier.weight(1f))
                 Switch(
                     checked = isDarkMode,
-                    onCheckedChange = { viewModel.toggleDarkMode() }
+                    onCheckedChange = { settingsViewModel.toggleDarkMode() }
                 )
             }
         }
