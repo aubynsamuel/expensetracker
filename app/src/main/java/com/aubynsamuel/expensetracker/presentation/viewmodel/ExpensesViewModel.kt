@@ -82,6 +82,12 @@ class ExpensesViewModel(private val expenseRepository: ExpenseRepository) : View
         }
     }
 
+    fun removeCategory(category: String) {
+        viewModelScope.launch {
+            expenseRepository.removeCategory(category)
+        }
+    }
+
     fun filterExpensesByToday(expenses: List<Expense>): List<Expense> {
         val calendar = Calendar.getInstance()
         val startOfDay = calendar.apply {
