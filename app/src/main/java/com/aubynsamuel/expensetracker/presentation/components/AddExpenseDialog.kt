@@ -54,6 +54,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
 import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import java.text.SimpleDateFormat
@@ -247,11 +248,16 @@ fun AddExpenseDialog(
                                     expanded = false
                                 },
                                 trailingIcon = {
-                                    IconButton(onClick = { viewModel.removeCategory(category) }) {
-                                        Icon(
-                                            Icons.Default.Close,
-                                            contentDescription = "Remove $category"
+                                    if (!SharedPreferencesManager.defaultCategories.contains(
+                                            category
                                         )
+                                    ) {
+                                        IconButton(onClick = { viewModel.removeCategory(category) }) {
+                                            Icon(
+                                                Icons.Default.Close,
+                                                contentDescription = "Remove $category"
+                                            )
+                                        }
                                     }
                                 }
                             )
