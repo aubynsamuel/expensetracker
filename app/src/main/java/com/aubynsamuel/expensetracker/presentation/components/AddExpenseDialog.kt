@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material3.AlertDialog
@@ -31,6 +32,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -243,6 +245,14 @@ fun AddExpenseDialog(
                                 onClick = {
                                     selectedCategory = category
                                     expanded = false
+                                },
+                                trailingIcon = {
+                                    IconButton(onClick = { viewModel.removeCategory(category) }) {
+                                        Icon(
+                                            Icons.Default.Close,
+                                            contentDescription = "Remove $category"
+                                        )
+                                    }
                                 }
                             )
                         }
