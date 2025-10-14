@@ -5,25 +5,45 @@ import androidx.lifecycle.viewModelScope
 import com.aubynsamuel.expensetracker.data.local.dummyExpenses
 import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class ExpensesViewModel(private val expenseRepository: ExpenseRepository) : ViewModel() {
 
-    val expensesList: StateFlow<List<Expense>> = expenseRepository.allExpenses.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+    private val _expensesList = MutableStateFlow<List<Expense>>(emptyList())
+    val expensesList = _expensesList.asStateFlow()
+
+    private val _filteredExpensesList = MutableStateFlow<List<Expense>>(emptyList())
+    val filteredExpensesList = _filteredExpensesList.asStateFlow()
 
     val expenseCategories: StateFlow<List<String>> = expenseRepository.expenseCategories.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    init {
+        viewModelScope.launch {
+            expenseRepository.allExpenses.collect {
+                _expensesList.value = it
+                _filteredExpensesList.value = it
+            }
+        }
+    }
+
+    fun filterExpenses(filter: String) {
+        when (filter) {
+            "Today" -> _filteredExpensesList.value = filterExpensesByToday(expensesList.value)
+            "Week" -> _filteredExpensesList.value = filterExpensesByThisWeek(expensesList.value)
+            "Month" -> _filteredExpensesList.value = filterExpensesByThisMonth(expensesList.value)
+            else -> _filteredExpensesList.value = expensesList.value
+        }
+    }
 
     fun insertSampleData() {
         viewModelScope.launch {

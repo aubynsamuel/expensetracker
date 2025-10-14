@@ -1,3 +1,6 @@
+package com.aubynsamuel.expensetracker.presentation.screens
+
+import SpendingChart
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -210,7 +213,9 @@ fun HomeScreenContent(
                 }
             }
 
-            items(expensesList.take(10), key = { it.id }) { expense ->
+            items(
+                expensesList.sortedByDescending { it.date }.take(10),
+                key = { it.id }) { expense ->
                 ExpenseItem(
                     expense = expense,
                     onEdit = {
