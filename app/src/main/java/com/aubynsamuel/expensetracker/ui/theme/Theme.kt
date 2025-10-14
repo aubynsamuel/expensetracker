@@ -10,7 +10,10 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.materialkolor.PaletteStyle
+import com.materialkolor.rememberDynamicMaterialThemeState
 
 val DarkColorScheme = darkColorScheme()
 val LightColorScheme = lightColorScheme()
@@ -32,8 +35,14 @@ fun ExpenseTrackerTheme(
         else -> LightColorScheme
     }
 
+    val dynamicThemeState = rememberDynamicMaterialThemeState(
+        isDark = darkTheme,
+        style = PaletteStyle.TonalSpot,
+        seedColor = Color(0xFF68A500),
+    )
+
     MaterialExpressiveTheme(
-        colorScheme = colorScheme,
+        colorScheme = dynamicThemeState.colorScheme,
         typography = Typography,
         content = content,
         motionScheme = MotionScheme.expressive()

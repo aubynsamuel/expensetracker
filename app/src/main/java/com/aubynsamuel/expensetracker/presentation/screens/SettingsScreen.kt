@@ -28,6 +28,7 @@ fun SettingsScreen(
     settingsViewModel: SettingsViewModel,
     drawerState: DrawerState,
     toggleDrawer: () -> Job,
+    goBack: () -> Unit,
 ) {
     val isDarkMode by settingsViewModel.isDarkMode.collectAsState()
     val context = LocalContext.current

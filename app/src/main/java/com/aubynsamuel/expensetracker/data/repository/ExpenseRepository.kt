@@ -8,14 +8,19 @@ import kotlinx.coroutines.flow.map
 
 class ExpenseRepository(
     private val expenseDao: ExpenseDao,
-    val sharedPreferencesManager: SharedPreferencesManager,
+    private val sharedPreferencesManager: SharedPreferencesManager,
 ) {
     val allExpenses: Flow<List<Expense>> = expenseDao.getAllExpenses()
+
     val expenseCategories: Flow<List<String>> =
         sharedPreferencesManager.categories.map { it.toList() }
 
     fun addCategory(category: String) {
         sharedPreferencesManager.addCategory(category)
+    }
+
+    fun removeCategory(category: String) {
+        sharedPreferencesManager.removeCategory(category)
     }
 
     suspend fun insertAll(expenses: List<Expense>) {

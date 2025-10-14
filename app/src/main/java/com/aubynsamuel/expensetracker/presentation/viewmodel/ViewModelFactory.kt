@@ -3,16 +3,20 @@ package com.aubynsamuel.expensetracker.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
+import com.aubynsamuel.expensetracker.data.repository.SettingsRepository
 
-class ViewModelFactory(private val repository: ExpenseRepository) : ViewModelProvider.Factory {
+class ViewModelFactory(
+    private val expenseRepository: ExpenseRepository,
+    private val settingsRepository: SettingsRepository,
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ExpensesViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ExpensesViewModel(repository) as T
+            return ExpensesViewModel(expenseRepository) as T
         }
         if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return SettingsViewModel(repository.sharedPreferencesManager) as T
+            return SettingsViewModel(settingsRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

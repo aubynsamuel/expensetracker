@@ -52,30 +52,41 @@ android {
 
 dependencies {
     "baselineProfile"(project(":baselineprofile"))
+    implementation(libs.androidx.profileinstaller)
+
+    // Material Kolor
+    implementation(libs.materialKolor)
 
     // Material Icons
     implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.vico.compose.m3)
 
+    // Ehsannarmani charts
     implementation(libs.compose.charts)
 
+    // Kotlin Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    // AndroidX Animation
     implementation(libs.androidx.animation.core)
     implementation(libs.androidx.animation)
 
     // Room Database
     implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.profileinstaller)
     ksp(libs.room.compiler)
     implementation(libs.androidx.room.ktx)
 
+    // Navigation 3 Compose
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
+    // SplashScreen
     implementation(libs.androidx.core.splashscreen)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -85,7 +96,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

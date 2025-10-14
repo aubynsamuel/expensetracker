@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
@@ -139,7 +141,11 @@ fun HomeScreenContent(
                 title = { Text("Home") },
                 navigationIcon = {
                     IconButton(onClick = toggleDrawer) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        Icon(
+                            if (drawerState == DrawerState.Opened) Icons.AutoMirrored.Filled.MenuOpen
+                            else Icons.Default.Menu,
+                            contentDescription = "Menu Button"
+                        )
                     }
                 },
             )
@@ -156,14 +162,11 @@ fun HomeScreenContent(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Apply padding from the Scaffold
+                .padding(paddingValues)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            item {
-                Spacer(modifier = Modifier.height(2.dp))
-            }
-
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
