@@ -4,7 +4,7 @@
 
 # Expensify
 
-An Android app for tracking daily expenses, built with Jetpack Compose and Material 3.
+A modern Android app for tracking and managing daily expenses, built with Jetpack Compose and Material 3.
 
 </div>
 
@@ -12,30 +12,26 @@ An Android app for tracking daily expenses, built with Jetpack Compose and Mater
 
 ## Features
 
-- **Manage Expenses**: Add, edit, and delete expenses with a title, amount, category, and date.
-- **Dashboard**: The home screen shows your total expenses, a pie chart of spending by category, and
-  your most recent transactions.
-- **Custom Categories**: Organize your spending with default categories or create your own.
-- **Expense History**: See a full list of your transactions and filter them by today, this week, or
-  this month.
-- **Customizable Theme**:
-  - Switch between light and dark modes.
-  - Use the AMOLED-friendly black theme.
-  - Pick a custom color to change the app's look and feel.
+- **Expense Management**: Add, edit, or delete expenses.  
+- **Dashboard Overview**: View total spending, visualize expenses by category with a chart, and track recent transactions at a glance.  
+- **Custom Categories**: Use default categories or create your own for more flexible tracking.  
+- **Expense History**: Browse your full transaction history and filter by day, week, or month.  
+- **Personalized Theming**:  
+  - Toggle between light, dark, or AMOLED-friendly black themes.  
+  - Select a custom accent color to match your style.  
 
 ## Tech Stack
 
-- **UI**: Jetpack Compose, Material 3
-- **Architecture**: MVVM
-- **Database**: Room
-- **Async**: Kotlin Coroutines & Flow
-- **Theming**: [Material Kolor](https://github.com/material-kolor/material-kolor)
-- **Charts**: [Compose Charts](https://github.com/ehsannarmani/compose-charts)
+- **UI**: Jetpack Compose, Material 3  
+- **Architecture**: MVVpM  
+- **Database**: Room    
+- **Theming**: [Material Kolor](https://github.com/material-kolor/material-kolor)  
+- **Charts**: [Compose Charts](https://github.com/ehsannarmani/compose-charts)  
 
 ## 🤝 Contributing
 
-Contributions are welcome! If you have ideas for new features or find a bug, please feel free to
-open an issue or submit a pull request.
+Contributions are welcome!  
+If you have ideas for new features, improvements, or bug fixes, feel free to open an issue or submit a pull request.
 
 ## 📄 License
 
