@@ -1,27 +1,42 @@
-Functional Requirements
+<div align="center">
 
-1. Add Expenses
-   Input fields: amount, category, description/note, date.
-   Save expense entry in local storage (SQLite/Room for Android, local DB, or even JSON for web).
+<img src="ScreenShots/ic_launcher_foreground.webp" width="128"/>
 
-2. View Expenses
-   List of expenses (recent first).
-   Show key details (amount, category, date).
-   Ability to filter by date (today, this week, this month).
+# Expensify
 
-3. Expense Categories
-   Predefined categories (Food, Transport, Shopping, Bills, Other).
-   Allow user to add their own categories.
+An Android app for tracking daily expenses, built with Jetpack Compose and Material 3.
 
-4. Total Summary
-   Show total spent (daily, weekly, monthly).
-   A simple chart (bar or pie) for spending breakdown.
+</div>
 
-5. Edit/Delete Expenses: Ability to update or remove entries.
+<!-- ### Screenshots -->
 
-Non-functional requirements
+## Features
 
-1. Recurring Expenses: Option to mark expense as recurring.
-2. Budget Tracking: Let user set a monthly budget and show progress toward it.
-3. Export Data: Export expenses as CSV or PDF.
-4. Dark Mode
+- **Manage Expenses**: Add, edit, and delete expenses with a title, amount, category, and date.
+- **Dashboard**: The home screen shows your total expenses, a pie chart of spending by category, and
+  your most recent transactions.
+- **Custom Categories**: Organize your spending with default categories or create your own.
+- **Expense History**: See a full list of your transactions and filter them by today, this week, or
+  this month.
+- **Customizable Theme**:
+  - Switch between light and dark modes.
+  - Use the AMOLED-friendly black theme.
+  - Pick a custom color to change the app's look and feel.
+
+## Tech Stack
+
+- **UI**: Jetpack Compose, Material 3
+- **Architecture**: MVVM
+- **Database**: Room
+- **Async**: Kotlin Coroutines & Flow
+- **Theming**: [Material Kolor](https://github.com/material-kolor/material-kolor)
+- **Charts**: [Compose Charts](https://github.com/ehsannarmani/compose-charts)
+
+## 🤝 Contributing
+
+Contributions are welcome! If you have ideas for new features or find a bug, please feel free to
+open an issue or submit a pull request.
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
