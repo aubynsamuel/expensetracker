@@ -225,7 +225,13 @@ fun Navigation(
                         ExpensesScreen(
                             expensesViewModel = expensesViewModel,
                             toggleDrawer = { toggleDrawer() },
-                            drawerState = drawerState
+                            drawerState = drawerState,
+                            goBack = {
+                                if (drawerState == DrawerState.Opened)
+                                    toggleDrawer()
+                                backStack.removeLastOrNull()
+
+                            }
                         )
                     }
 
@@ -233,7 +239,12 @@ fun Navigation(
                         SettingsScreen(
                             settingsViewModel = settingsViewModel,
                             toggleDrawer = { toggleDrawer() },
-                            drawerState = drawerState
+                            drawerState = drawerState,
+                            goBack = {
+                                if (drawerState == DrawerState.Opened)
+                                    toggleDrawer()
+                                backStack.removeLastOrNull()
+                            }
                         )
                     }
                 }

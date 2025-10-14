@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +45,7 @@ fun ExpensesScreen(
     expensesViewModel: ExpensesViewModel,
     toggleDrawer: () -> Unit,
     drawerState: DrawerState,
+    goBack: () -> Unit,
 ) {
     val expensesList by expensesViewModel.filteredExpensesList.collectAsState()
     var selectedDateFilter by remember { mutableStateOf("All") }
@@ -96,8 +97,11 @@ fun ExpensesScreen(
             TopAppBar(
                 title = { Text("Expenses") },
                 navigationIcon = {
-                    IconButton(onClick = toggleDrawer) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    IconButton(onClick = goBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back button"
+                        )
                     }
                 },
             )

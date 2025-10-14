@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
@@ -140,7 +141,11 @@ fun HomeScreenContent(
                 title = { Text("Home") },
                 navigationIcon = {
                     IconButton(onClick = toggleDrawer) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        Icon(
+                            if (drawerState == DrawerState.Opened) Icons.AutoMirrored.Filled.MenuOpen
+                            else Icons.Default.Menu,
+                            contentDescription = "Menu Button"
+                        )
                     }
                 },
             )
