@@ -60,8 +60,6 @@ dependencies {
     // Material Icons
     implementation(libs.androidx.material.icons.extended)
 
-    implementation(libs.vico.compose.m3)
-
     // Ehsannarmani charts
     implementation(libs.compose.charts)
 
@@ -84,9 +82,6 @@ dependencies {
 
     // SplashScreen
     implementation(libs.androidx.core.splashscreen)
-
-    // DataStore
-    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

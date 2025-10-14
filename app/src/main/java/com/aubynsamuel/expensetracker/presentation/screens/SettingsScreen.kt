@@ -3,40 +3,37 @@
 package com.aubynsamuel.expensetracker.presentation.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.NightlightRound
+import androidx.compose.material.icons.filled.NightsStay
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.aubynsamuel.expensetracker.data.local.SeedColors
 import com.aubynsamuel.expensetracker.data.model.SettingsState
+import com.aubynsamuel.expensetracker.presentation.components.settings.ColorSchemePicker
+import com.aubynsamuel.expensetracker.presentation.components.settings.SettingItem
+import com.aubynsamuel.expensetracker.presentation.components.settings.SettingsCard
 import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
 import com.aubynsamuel.expensetracker.ui.theme.ExpenseTrackerTheme
@@ -60,6 +57,7 @@ fun SettingsScreen(
     )
 }
 
+
 @Composable
 fun SettingsContent(
     settingsState: SettingsState,
@@ -72,6 +70,18 @@ fun SettingsContent(
         enabled = drawerState == DrawerState.Opened,
         onBack = { toggleDrawer() }
     )
+    var showSelectColorDialog by remember { mutableStateOf(false) }
+
+    if (showSelectColorDialog) {
+        ColorSchemePicker(
+            onDismiss = { showSelectColorDialog = false },
+            seedColor = settingsState.seedColor,
+            onClick = { color ->
+                onStateChange(settingsState.copy(seedColor = color))
+                showSelectColorDialog = false
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -95,74 +105,43 @@ fun SettingsContent(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Dark Theme
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Dark Theme", modifier = Modifier.weight(1f))
-                Switch(
+            SettingsCard(cardTitle = "Appearance") {
+                // Dark Theme
+                SettingItem(
+                    title = "Dark Theme",
+                    subTitle = "Use a dark appearance",
+                    icon = if (settingsState.darkTheme) Icons.Default.DarkMode
+                    else Icons.Default.LightMode,
                     checked = settingsState.darkTheme,
-                    onCheckedChange = { onStateChange(settingsState.copy(darkTheme = it)) }
+                    onCheckedChange = { it -> onStateChange(settingsState.copy(darkTheme = it)) },
+                    onClick = { onStateChange(settingsState.copy(darkTheme = !settingsState.darkTheme)) }
                 )
-            }
 
-            // Black Theme
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Black Theme", modifier = Modifier.weight(1f))
-                Switch(
+                // Black Theme
+                SettingItem(
+                    title = "Black Theme",
+                    subTitle = "Use a pure black background",
+                    icon = if (settingsState.blackTheme) Icons.Default.NightlightRound
+                    else Icons.Default.NightsStay,
                     checked = settingsState.blackTheme,
-                    onCheckedChange = { onStateChange(settingsState.copy(blackTheme = it)) },
+                    onCheckedChange = { it -> onStateChange(settingsState.copy(blackTheme = it)) },
+                    onClick = { onStateChange(settingsState.copy(blackTheme = !settingsState.blackTheme)) },
                     enabled = settingsState.darkTheme
                 )
-            }
 
-            // Seed Color
-            Column {
-                Text(text = "Theme Color")
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(SeedColors) { color ->
-                        ColorPickerItem(
-                            color = color,
-                            isSelected = color == settingsState.seedColor,
-                            onClick = { onStateChange(settingsState.copy(seedColor = color)) }
-                        )
-                    }
-                }
+                // Seed Color
+                SettingItem(
+                    title = "Color Scheme",
+                    icon = Icons.Default.Palette,
+                    subTitle = "Pick your theme color",
+                    onClick = { showSelectColorDialog = true }
+                )
             }
         }
     }
 }
 
-@Composable
-fun ColorPickerItem(color: Color, isSelected: Boolean, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .background(color)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        if (isSelected) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "selected",
-                tint = Color.White
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_9_PRO)
 @Composable
 fun SettingsScreenPreview() {
     ExpenseTrackerTheme(settingsState = SettingsState()) {
