@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Garage
-import androidx.compose.material.icons.filled.Poll
+import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -55,13 +55,13 @@ fun DrawerContent(
         ) {
             DrawerItem(
                 label = "Home",
-                icon = Icons.Default.Garage,
+                icon = Icons.Default.Home,
                 selected = currentScreen == Screen.HomeScreen,
                 onClick = { changeScreen(Screen.HomeScreen) }
             )
             DrawerItem(
                 label = "Expenses",
-                icon = Icons.Default.Poll,
+                icon = Icons.Default.AccountBalanceWallet,
                 selected = currentScreen == Screen.ExpensesScreen,
                 onClick = { changeScreen(Screen.ExpensesScreen) }
             )
