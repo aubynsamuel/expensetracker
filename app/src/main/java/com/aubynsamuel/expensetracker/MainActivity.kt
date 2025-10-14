@@ -9,21 +9,14 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
 import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
-import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
-import com.aubynsamuel.expensetracker.data.repository.SettingsRepository
 import com.aubynsamuel.expensetracker.presentation.navigation.Navigation
-import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
-import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
-import com.aubynsamuel.expensetracker.presentation.viewmodel.ViewModelFactory
 import com.aubynsamuel.expensetracker.ui.theme.ExpenseTrackerTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    private var keepSplash = true // State to control splash screen visibility
+    private var keepSplash = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -33,28 +26,20 @@ class MainActivity : ComponentActivity() {
             keepSplash = false
         }
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
+
         val sharedPreferencesManager = SharedPreferencesManager(this)
-        val database = ExpenseDatabase.getDatabase(this)
-        val settingsRepository = SettingsRepository(sharedPreferencesManager)
-        val expenseRepository = ExpenseRepository(database.expenseDao(), sharedPreferencesManager)
+
         setContent {
-            val settingsViewModel: SettingsViewModel = viewModel(
-                factory = ViewModelFactory(expenseRepository, settingsRepository)
-            )
-            val expensesViewModel: ExpensesViewModel = viewModel(
-                factory = ViewModelFactory(expenseRepository, settingsRepository)
-            )
+            val settingsState by sharedPreferencesManager.settingsState.collectAsState()
 
-            val isDarkMode by settingsViewModel.isDarkMode.collectAsState()
+            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
+                !settingsState.darkTheme
 
-            WindowCompat.getInsetsController(window, window.decorView)
-                .isAppearanceLightStatusBars = !isDarkMode
-
-            ExpenseTrackerTheme(darkTheme = isDarkMode) {
+            ExpenseTrackerTheme(settingsState = settingsState) {
                 Navigation(
-                    settingsViewModel = settingsViewModel,
-                    expensesViewModel = expensesViewModel
+                    sharedPreferencesManager = sharedPreferencesManager
                 )
             }
         }
