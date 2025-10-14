@@ -31,6 +31,13 @@ class SharedPreferencesManager(context: Context) {
         _categories.value = currentCategories
     }
 
+    fun removeCategory(category: String) {
+        val currentCategories = categories.value.toMutableSet()
+        currentCategories.remove(category)
+        sharedPreferences.edit { putStringSet(CATEGORIES_KEY, currentCategories) }
+        _categories.value = currentCategories
+    }
+
     companion object {
         const val IS_DARK_MODE = "is_dark_mode"
         const val CATEGORIES_KEY = "categories"
