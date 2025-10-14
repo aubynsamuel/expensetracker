@@ -3,6 +3,7 @@ package com.aubynsamuel.expensetracker.presentation.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -153,7 +154,8 @@ fun ExpensesScreen(
 
             // Expenses List
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(vertical = 16.dp)
             ) {
                 items(expensesList.sortedByDescending { it.date }) { expense ->
                     ExpenseItem(
