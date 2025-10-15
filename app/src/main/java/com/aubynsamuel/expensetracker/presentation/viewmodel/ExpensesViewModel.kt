@@ -6,10 +6,8 @@ import com.aubynsamuel.expensetracker.data.local.dummyExpenses
 import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -21,11 +19,8 @@ class ExpensesViewModel(private val expenseRepository: ExpenseRepository) : View
     private val _filteredExpensesList = MutableStateFlow<List<Expense>>(emptyList())
     val filteredExpensesList = _filteredExpensesList.asStateFlow()
 
-    val expenseCategories: StateFlow<List<String>> = expenseRepository.expenseCategories.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+    private var _expenseCategories = MutableStateFlow(expenseRepository.getExpenseCategories())
+    val expenseCategories: StateFlow<List<String>> = _expenseCategories
 
     init {
         viewModelScope.launch {
@@ -79,12 +74,14 @@ class ExpensesViewModel(private val expenseRepository: ExpenseRepository) : View
     fun addCategory(category: String) {
         viewModelScope.launch {
             expenseRepository.addCategory(category)
+            _expenseCategories.value = expenseRepository.getExpenseCategories()
         }
     }
 
     fun removeCategory(category: String) {
         viewModelScope.launch {
             expenseRepository.removeCategory(category)
+            _expenseCategories.value = expenseRepository.getExpenseCategories()
         }
     }
 

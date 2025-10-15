@@ -5,55 +5,49 @@ import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
 import androidx.core.content.edit
 import com.aubynsamuel.expensetracker.data.model.SettingsState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class SharedPreferencesManager(context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-    private val _settingsState = MutableStateFlow(
-        SettingsState(
+    fun getSettings(): SettingsState {
+        val storedColorValue = sharedPreferences.getLong(SEED_COLOR_KEY, -1L)
+        val seedColor = if (storedColorValue == -1L) {
+            SeedColors[1]
+        } else {
+            Color(storedColorValue.toULong())
+        }
+
+        return SettingsState(
             darkTheme = sharedPreferences.getBoolean(DARK_THEME_KEY, false),
-            seedColor = Color(
-                sharedPreferences.getInt(
-                    SEED_COLOR_KEY,
-                    SeedColors[0].value.toInt()
-                )
-            ),
-            blackTheme = sharedPreferences.getBoolean(BLACK_THEME_KEY, true)
+            seedColor = seedColor,
+            blackTheme = sharedPreferences.getBoolean(BLACK_THEME_KEY, false)
         )
-    )
-    val settingsState = _settingsState.asStateFlow()
-
-
-    private val _expenseCategories = MutableStateFlow(
-        sharedPreferences.getStringSet(CATEGORIES_KEY, defaultCategories) ?: defaultCategories
-    )
-    val categories: StateFlow<Set<String>> = _expenseCategories
+    }
 
     fun saveSettings(settingsState: SettingsState) {
-        _settingsState.value = settingsState
         sharedPreferences.edit {
             putBoolean(DARK_THEME_KEY, settingsState.darkTheme)
-            putInt(SEED_COLOR_KEY, settingsState.seedColor.value.toInt())
+            putLong(SEED_COLOR_KEY, settingsState.seedColor.value.toLong())
             putBoolean(BLACK_THEME_KEY, settingsState.blackTheme)
         }
     }
 
+    fun getCategories(): Set<String> {
+        return sharedPreferences.getStringSet(CATEGORIES_KEY, defaultCategories)
+            ?: defaultCategories
+    }
+
     fun addCategory(category: String) {
-        val currentCategories = categories.value.toMutableSet()
+        val currentCategories = getCategories().toMutableSet()
         currentCategories.add(category)
         sharedPreferences.edit { putStringSet(CATEGORIES_KEY, currentCategories) }
-        _expenseCategories.value = currentCategories
     }
 
     fun removeCategory(category: String) {
-        val currentCategories = categories.value.toMutableSet()
+        val currentCategories = getCategories().toMutableSet()
         currentCategories.remove(category)
         sharedPreferences.edit { putStringSet(CATEGORIES_KEY, currentCategories) }
-        _expenseCategories.value = currentCategories
     }
 
     companion object {

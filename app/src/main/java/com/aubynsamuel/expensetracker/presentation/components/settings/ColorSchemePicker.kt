@@ -33,7 +33,7 @@ fun ColorSchemePicker(onDismiss: () -> Unit, seedColor: Color, onClick: (Color) 
                     items(SeedColors) { color ->
                         ColorItem(
                             color = color,
-                            isSelected = color == seedColor,
+                            isSelected = color.value.toString() == seedColor.value.toString(),
                             onClick = { onClick(color) }
                         )
                     }
