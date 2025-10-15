@@ -1,27 +1,38 @@
-Functional Requirements
+<div align="center">
 
-1. Add Expenses
-   Input fields: amount, category, description/note, date.
-   Save expense entry in local storage (SQLite/Room for Android, local DB, or even JSON for web).
+<img src="ScreenShots/ic_launcher_foreground.webp" width="128"/>
 
-2. View Expenses
-   List of expenses (recent first).
-   Show key details (amount, category, date).
-   Ability to filter by date (today, this week, this month).
+# Expensify
 
-3. Expense Categories
-   Predefined categories (Food, Transport, Shopping, Bills, Other).
-   Allow user to add their own categories.
+A modern Android app for tracking and managing daily expenses, built with Jetpack Compose and Material 3.
 
-4. Total Summary
-   Show total spent (daily, weekly, monthly).
-   A simple chart (bar or pie) for spending breakdown.
+</div>
 
-5. Edit/Delete Expenses: Ability to update or remove entries.
+<!-- ### Screenshots -->
 
-Non-functional requirements
+## Features
 
-1. Recurring Expenses: Option to mark expense as recurring.
-2. Budget Tracking: Let user set a monthly budget and show progress toward it.
-3. Export Data: Export expenses as CSV or PDF.
-4. Dark Mode
+- **Expense Management**: Add, edit, or delete expenses.  
+- **Dashboard Overview**: View total spending, visualize expenses by category with a chart, and track recent transactions at a glance.  
+- **Custom Categories**: Use default categories or create your own for more flexible tracking.  
+- **Expense History**: Browse your full transaction history and filter by day, week, or month.  
+- **Personalized Theming**:  
+  - Toggle between light, dark, or AMOLED-friendly black themes.  
+  - Select a custom accent color to match your style.  
+
+## Tech Stack
+
+- **UI**: Jetpack Compose, Material 3  
+- **Architecture**: MVVpM  
+- **Database**: Room    
+- **Theming**: [Material Kolor](https://github.com/material-kolor/material-kolor)  
+- **Charts**: [Compose Charts](https://github.com/ehsannarmani/compose-charts)  
+
+## 🤝 Contributing
+
+Contributions are welcome!  
+If you have ideas for new features, improvements, or bug fixes, feel free to open an issue or submit a pull request.
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

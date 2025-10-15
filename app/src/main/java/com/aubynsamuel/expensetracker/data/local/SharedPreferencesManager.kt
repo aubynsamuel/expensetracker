@@ -22,7 +22,7 @@ class SharedPreferencesManager(context: Context) {
                     SeedColors[0].value.toInt()
                 )
             ),
-            blackTheme = sharedPreferences.getBoolean(BLACK_THEME_KEY, false)
+            blackTheme = sharedPreferences.getBoolean(BLACK_THEME_KEY, true)
         )
     )
     val settingsState = _settingsState.asStateFlow()
