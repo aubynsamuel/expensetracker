@@ -15,10 +15,10 @@ import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import com.aubynsamuel.expensetracker.data.repository.SettingsRepository
 import com.aubynsamuel.expensetracker.presentation.navigation.Navigation
+import com.aubynsamuel.expensetracker.presentation.theme.ExpenseTrackerTheme
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ViewModelFactory
-import com.aubynsamuel.expensetracker.ui.theme.ExpenseTrackerTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

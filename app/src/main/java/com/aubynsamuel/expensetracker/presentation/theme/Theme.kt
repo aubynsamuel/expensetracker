@@ -1,4 +1,4 @@
-package com.aubynsamuel.expensetracker.ui.theme
+package com.aubynsamuel.expensetracker.presentation.theme
 
 import android.os.Build
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
