@@ -74,7 +74,11 @@ fun ExpenseItem(expense: Expense, onEdit: (Expense) -> Unit, onDelete: (Expense)
                         )
                     }
                     Column {
-                        Text(text = expense.title, style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = expense.title,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
                         Text(
                             text = SimpleDateFormat(
                                 "MMM dd, yyyy",
@@ -87,7 +91,7 @@ fun ExpenseItem(expense: Expense, onEdit: (Expense) -> Unit, onDelete: (Expense)
                 }
                 Text(
                     text = "$${expense.amount}",
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.SemiBold,
                     color = if (expense.amount > 0) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.error
                 )

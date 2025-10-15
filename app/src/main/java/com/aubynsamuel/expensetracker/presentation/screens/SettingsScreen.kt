@@ -97,12 +97,11 @@ fun SettingsContent(
                 }
             )
         }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
-                .padding(16.dp),
+                .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SettingsCard(cardTitle = "Appearance") {

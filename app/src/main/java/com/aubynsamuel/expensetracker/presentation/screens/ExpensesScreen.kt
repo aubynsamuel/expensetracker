@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
@@ -32,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.presentation.components.EditExpenseDialog
@@ -110,7 +112,7 @@ fun ExpensesScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -159,7 +161,13 @@ fun ExpensesScreen(
             // Expenses List
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 16.dp)
+                contentPadding = PaddingValues(
+                    top = 16.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 10.dp
+                ),
+                modifier = Modifier.clip(
+                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                )
             ) {
                 items(expensesList.sortedByDescending { it.date }) { expense ->
                     ExpenseItem(
