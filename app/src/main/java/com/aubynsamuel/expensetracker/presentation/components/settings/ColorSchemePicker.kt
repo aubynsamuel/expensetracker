@@ -51,7 +51,7 @@ fun ColorSchemePicker(onDismiss: () -> Unit, seedColor: Color, onClick: (Color) 
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Button(onClick = onDismiss) {
+                    Button(onClick = onDismiss, modifier = Modifier.padding(end = 10.dp)) {
                         Text("Close")
                     }
                 }
