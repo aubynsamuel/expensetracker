@@ -38,17 +38,23 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.aubynsamuel.expensetracker.presentation.components.DrawerContent
+import com.aubynsamuel.expensetracker.presentation.screens.BudgetsScreen
 import com.aubynsamuel.expensetracker.presentation.screens.ExpensesScreen
 import com.aubynsamuel.expensetracker.presentation.screens.HomeScreenContent
 import com.aubynsamuel.expensetracker.presentation.screens.SettingsScreen
 import com.aubynsamuel.expensetracker.presentation.utils.navigate
+import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun Navigation(settingsViewModel: SettingsViewModel, expensesViewModel: ExpensesViewModel) {
+fun Navigation(
+    settingsViewModel: SettingsViewModel,
+    expensesViewModel: ExpensesViewModel,
+    budgetViewModel: BudgetViewModel,
+) {
     val density = LocalDensity.current
     val drawerWidth = 280.dp
     val drawerWidthPx = with(density) { drawerWidth.toPx() }
@@ -228,6 +234,18 @@ fun Navigation(settingsViewModel: SettingsViewModel, expensesViewModel: Expenses
                                     toggleDrawer()
                                 backStack.removeLastOrNull()
 
+                            }
+                        )
+                    }
+
+                    entry<Screen.BudgetsScreen> {
+                        BudgetsScreen(
+                            budgetViewModel = budgetViewModel,
+                            expensesViewModel = expensesViewModel,
+                            goBack = {
+                                if (drawerState == DrawerState.Opened)
+                                    toggleDrawer()
+                                backStack.removeLastOrNull()
                             }
                         )
                     }
