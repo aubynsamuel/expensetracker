@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -46,8 +47,18 @@ fun SettingItem(
             Icon(icon, contentDescription = "")
             Spacer(modifier = Modifier.width(10.dp))
             Column {
-                Text(title)
-                Text(subTitle, style = MaterialTheme.typography.bodySmall, maxLines = 1)
+                Text(
+                    title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    subTitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
             }
         }
 

@@ -162,6 +162,7 @@ fun AddExpenseDialog(
                 Text(
                     text = "Add New Expense",
                     style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -351,7 +352,7 @@ fun AddExpenseDialog(
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier.height(48.dp)
                     ) {
-                        Text("Add Expense", fontWeight = FontWeight.Bold)
+                        Text("Add Expense")
                     }
                 }
             }

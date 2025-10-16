@@ -4,7 +4,6 @@ import com.aubynsamuel.expensetracker.data.local.ExpenseDao
 import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
 import com.aubynsamuel.expensetracker.data.model.Expense
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class ExpenseRepository(
     private val expenseDao: ExpenseDao,
@@ -12,8 +11,9 @@ class ExpenseRepository(
 ) {
     val allExpenses: Flow<List<Expense>> = expenseDao.getAllExpenses()
 
-    val expenseCategories: Flow<List<String>> =
-        sharedPreferencesManager.categories.map { it.toList() }
+    fun getExpenseCategories(): List<String> {
+        return sharedPreferencesManager.getCategories().toList()
+    }
 
     fun addCategory(category: String) {
         sharedPreferencesManager.addCategory(category)

@@ -35,8 +35,8 @@ import com.aubynsamuel.expensetracker.presentation.components.settings.ColorSche
 import com.aubynsamuel.expensetracker.presentation.components.settings.SettingItem
 import com.aubynsamuel.expensetracker.presentation.components.settings.SettingsCard
 import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
+import com.aubynsamuel.expensetracker.presentation.theme.ExpenseTrackerTheme
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
-import com.aubynsamuel.expensetracker.ui.theme.ExpenseTrackerTheme
 import kotlinx.coroutines.Job
 
 @Composable
@@ -97,12 +97,11 @@ fun SettingsContent(
                 }
             )
         }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
-                .padding(16.dp),
+                .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SettingsCard(cardTitle = "Appearance") {
