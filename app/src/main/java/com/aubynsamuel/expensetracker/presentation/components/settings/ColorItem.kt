@@ -1,5 +1,6 @@
 package com.aubynsamuel.expensetracker.presentation.components.settings
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,11 +35,12 @@ fun ColorItem(
             .copy(
                 containerColor = color,
                 checkedContainerColor = color,
-                contentColor = Color.White,
-                checkedContentColor = Color.White,
+                contentColor = if (color.value == Color.White.value) Color.Black else Color.White,
+                checkedContentColor = if (color.value == Color.White.value) Color.Black else Color.White,
             ),
         modifier = Modifier
-            .size(60.dp)
+            .padding(8.dp)
+            .size(50.dp)
     ) {
         if (isSelected) {
             Icon(

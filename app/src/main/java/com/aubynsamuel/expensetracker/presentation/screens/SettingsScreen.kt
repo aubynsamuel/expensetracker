@@ -78,7 +78,6 @@ fun SettingsContent(
             seedColor = settingsState.seedColor,
             onClick = { color ->
                 onStateChange(settingsState.copy(seedColor = color))
-                showSelectColorDialog = false
             }
         )
     }
