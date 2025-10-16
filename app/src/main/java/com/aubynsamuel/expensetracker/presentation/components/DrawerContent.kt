@@ -65,6 +65,12 @@ fun DrawerContent(
                 selected = currentScreen == Screen.ExpensesScreen,
                 onClick = { changeScreen(Screen.ExpensesScreen) }
             )
+            DrawerItem(
+                label = "Budgets",
+                icon = Icons.Default.AccountBalanceWallet, //TODO: Change icon
+                selected = currentScreen == Screen.BudgetsScreen,
+                onClick = { changeScreen(Screen.BudgetsScreen) }
+            )
         }
 
         // Settings at bottom

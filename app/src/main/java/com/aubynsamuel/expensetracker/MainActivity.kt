@@ -12,10 +12,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
 import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
+import com.aubynsamuel.expensetracker.data.repository.BudgetRepository
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import com.aubynsamuel.expensetracker.data.repository.SettingsRepository
 import com.aubynsamuel.expensetracker.presentation.navigation.Navigation
 import com.aubynsamuel.expensetracker.presentation.theme.ExpenseTrackerTheme
+import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ViewModelFactory
@@ -41,13 +43,17 @@ class MainActivity : ComponentActivity() {
         val settingsRepository = SettingsRepository(sharedPreferencesManager)
         val expenseRepository =
             ExpenseRepository(database.expenseDao(), sharedPreferencesManager)
+        val budgetRepository = BudgetRepository(database.budgetDao())
 
         setContent {
             val settingsViewModel: SettingsViewModel = viewModel(
-                factory = ViewModelFactory(expenseRepository, settingsRepository)
+                factory = ViewModelFactory(expenseRepository, settingsRepository, budgetRepository)
             )
             val expensesViewModel: ExpensesViewModel = viewModel(
-                factory = ViewModelFactory(expenseRepository, settingsRepository)
+                factory = ViewModelFactory(expenseRepository, settingsRepository, budgetRepository)
+            )
+            val budgetViewModel: BudgetViewModel = viewModel(
+                factory = ViewModelFactory(expenseRepository, settingsRepository, budgetRepository)
             )
             val settingsState by settingsViewModel.settingsState.collectAsState()
 
@@ -57,7 +63,8 @@ class MainActivity : ComponentActivity() {
             ExpenseTrackerTheme(settingsState = settingsState) {
                 Navigation(
                     settingsViewModel = settingsViewModel,
-                    expensesViewModel = expensesViewModel
+                    expensesViewModel = expensesViewModel,
+                    budgetViewModel = budgetViewModel
                 )
             }
         }
