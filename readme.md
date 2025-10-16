@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="ScreenShots/ic_launcher_foreground.webp" width="128" alt="App Icon"/>
+<img src="screenShots/ic_launcher_foreground.webp" width="128" alt="App Icon"/>
 
 # Expensify
 
@@ -9,7 +9,15 @@ Material 3.
 
 </div>
 
-<!-- ### Screenshots -->
+### Screenshots
+
+<div align="center">
+
+<img src="screenShots/expensify-screenshot-home.webp" alt="App Screenshot - Home" width="300"/>
+<img src="screenShots/expensify-screenshot-home2.webp" alt="App Screenshot - Home2" width="300"/>
+<img src="screenShots/expensify-screenshot-expenses.webp" alt="App Screenshot - Expenses" width="300"/>
+
+</div>
 
 ## Features
 
