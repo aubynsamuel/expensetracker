@@ -44,6 +44,9 @@ android {
             freeCompilerArgs = listOf("-Xcontext-parameters")
         }
     }
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
     buildFeatures {
         compose = true
         buildConfig = true
