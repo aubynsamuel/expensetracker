@@ -3,6 +3,43 @@ package com.aubynsamuel.expensetracker.data.local
 import com.aubynsamuel.expensetracker.data.model.Expense
 import java.util.concurrent.TimeUnit
 
+val currencies = listOf(
+    "USD",
+    "EUR",
+    "JPY",
+    "GBP",
+    "AUD",
+    "CAD",
+    "CHF",
+    "CNY",
+    "SEK",
+    "NZD",
+    "KRW",
+    "SGD",
+    "NOK",
+    "MXN",
+    "INR",
+    "RUB",
+    "ZAR",
+    "TRY",
+    "BRL",
+    "TWD",
+    "DKK",
+    "PLN",
+    "THB",
+    "IDR",
+    "HUF",
+    "CZK",
+    "ILS",
+    "CLP",
+    "PHP",
+    "AED",
+    "COP",
+    "SAR",
+    "MYR",
+    "RON"
+)
+
 val dummyExpenses = listOf(
     // 1-5: Food 🍔
     Expense(

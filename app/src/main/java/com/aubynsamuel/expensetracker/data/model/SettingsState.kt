@@ -8,4 +8,5 @@ data class SettingsState(
     val darkTheme: Boolean = false,
     val seedColor: Color = Color.White,
     val blackTheme: Boolean = true,
+    val currency: String = "USD",
 )
