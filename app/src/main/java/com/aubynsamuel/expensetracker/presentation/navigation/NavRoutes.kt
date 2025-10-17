@@ -15,4 +15,7 @@ sealed class Screen : NavKey {
 
     @Serializable
     object BudgetsScreen : NavKey
+
+    @Serializable
+    data class BudgetDetailsScreen(val budgetId: Int) : NavKey
 }

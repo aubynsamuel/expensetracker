@@ -33,14 +33,13 @@ import com.aubynsamuel.expensetracker.presentation.components.AddBudgetDialog
 import com.aubynsamuel.expensetracker.presentation.components.BudgetItem
 import com.aubynsamuel.expensetracker.presentation.components.EditBudgetDialog
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
-import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BudgetsScreen(
     budgetViewModel: BudgetViewModel,
-    expensesViewModel: ExpensesViewModel,
     goBack: () -> Unit,
+    navigateToBudgetDetails: (Int) -> Unit,
 ) {
     val budgetsList by budgetViewModel.budgetsList.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -85,7 +84,6 @@ fun BudgetsScreen(
     if (showAddBudgetDialog) {
         AddBudgetDialog(
             viewModel = budgetViewModel,
-            expensesViewModel = expensesViewModel,
             onDismiss = { showAddBudgetDialog = false }
         )
     }
@@ -134,6 +132,9 @@ fun BudgetsScreen(
                         onDelete = {
                             budgetToDelete = it
                             showDeleteDialog = true
+                        },
+                        onClick = {
+                            navigateToBudgetDetails(budget.id)
                         }
                     )
                 }

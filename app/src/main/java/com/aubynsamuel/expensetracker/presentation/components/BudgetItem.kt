@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,20 +30,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.Budget
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
-fun BudgetItem(budget: Budget, onEdit: (Budget) -> Unit, onDelete: (Budget) -> Unit) {
+fun BudgetItem(
+    budget: Budget,
+    onEdit: (Budget) -> Unit,
+    onDelete: (Budget) -> Unit,
+    onClick: () -> Unit,
+) {
     var expanded by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { expanded = !expanded },
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -67,7 +71,7 @@ fun BudgetItem(budget: Budget, onEdit: (Budget) -> Unit, onDelete: (Budget) -> U
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = budget.category.first().toString(),
+                            text = budget.name.first().toString(),
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold
@@ -75,25 +79,15 @@ fun BudgetItem(budget: Budget, onEdit: (Budget) -> Unit, onDelete: (Budget) -> U
                     }
                     Column {
                         Text(
-                            text = budget.title,
+                            text = budget.name,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground
                         )
-                        Text(
-                            text = SimpleDateFormat(
-                                "MMM dd, yyyy",
-                                Locale.getDefault()
-                            ).format(Date(budget.date)),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 }
-                Text(
-                    text = "$${budget.amount}",
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                IconButton(onClick = { expanded = !expanded }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                }
             }
             AnimatedVisibility(expanded) {
                 Row(
@@ -112,4 +106,11 @@ fun BudgetItem(budget: Budget, onEdit: (Budget) -> Unit, onDelete: (Budget) -> U
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun BudgetItemPreview() {
+    val budget = Budget(id = 1, name = "Groceries")
+    BudgetItem(budget = budget, onEdit = {}, onDelete = {}, onClick = {})
 }

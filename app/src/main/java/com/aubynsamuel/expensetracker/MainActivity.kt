@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
         val settingsRepository = SettingsRepository(sharedPreferencesManager)
         val expenseRepository =
             ExpenseRepository(database.expenseDao(), sharedPreferencesManager)
-        val budgetRepository = BudgetRepository(database.budgetDao())
+        val budgetRepository = BudgetRepository(database.budgetDao(), database.budgetItemDao())
 
         setContent {
             val settingsViewModel: SettingsViewModel = viewModel(

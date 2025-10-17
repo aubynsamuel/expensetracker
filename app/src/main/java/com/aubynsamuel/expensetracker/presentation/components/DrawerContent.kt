@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.StackedBarChart
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,7 +68,7 @@ fun DrawerContent(
             )
             DrawerItem(
                 label = "Budgets",
-                icon = Icons.Default.AccountBalanceWallet, //TODO: Change icon
+                icon = Icons.Default.StackedBarChart,
                 selected = currentScreen == Screen.BudgetsScreen,
                 onClick = { changeScreen(Screen.BudgetsScreen) }
             )
