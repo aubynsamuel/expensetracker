@@ -23,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -32,9 +31,7 @@ import com.aubynsamuel.expensetracker.data.model.Budget
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditBudgetDialog(budget: Budget, onUpdateBudget: (Budget) -> Unit, onDismiss: () -> Unit) {
-    var amount by remember { mutableStateOf(budget.amount.toString()) }
-    var category by remember { mutableStateOf(budget.category) }
-    var description by remember { mutableStateOf(budget.title) }
+    var name by remember { mutableStateOf(budget.name) }
 
     Dialog(
         onDismissRequest = { onDismiss() }
@@ -52,29 +49,14 @@ fun EditBudgetDialog(budget: Budget, onUpdateBudget: (Budget) -> Unit, onDismiss
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextField(
-                    value = amount,
-                    onValueChange = { amount = it },
+                    value = name,
+                    onValueChange = { name = it },
                     label = { Text("Amount") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next
                     )
                 )
-                TextField(
-                    value = category,
-                    onValueChange = { category = it },
-                    label = { Text("Category") }
-                )
-                TextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Description") },
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        imeAction = ImeAction.Done
-                    )
-                )
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
@@ -89,9 +71,7 @@ fun EditBudgetDialog(budget: Budget, onUpdateBudget: (Budget) -> Unit, onDismiss
                     Button(onClick = {
                         onUpdateBudget(
                             budget.copy(
-                                title = description,
-                                amount = amount.toDouble(),
-                                category = category
+                                name = name,
                             )
                         )
                         onDismiss()

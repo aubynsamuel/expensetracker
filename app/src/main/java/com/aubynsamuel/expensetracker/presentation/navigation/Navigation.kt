@@ -38,6 +38,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.aubynsamuel.expensetracker.presentation.components.DrawerContent
+import com.aubynsamuel.expensetracker.presentation.screens.BudgetDetailsScreen
 import com.aubynsamuel.expensetracker.presentation.screens.BudgetsScreen
 import com.aubynsamuel.expensetracker.presentation.screens.ExpensesScreen
 import com.aubynsamuel.expensetracker.presentation.screens.HomeScreenContent
@@ -241,10 +242,22 @@ fun Navigation(
                     entry<Screen.BudgetsScreen> {
                         BudgetsScreen(
                             budgetViewModel = budgetViewModel,
-                            expensesViewModel = expensesViewModel,
                             goBack = {
                                 if (drawerState == DrawerState.Opened)
                                     toggleDrawer()
+                                backStack.removeLastOrNull()
+                            },
+                            navigateToBudgetDetails = { budgetId ->
+                                backStack.navigate(Screen.BudgetDetailsScreen(budgetId))
+                            }
+                        )
+                    }
+
+                    entry<Screen.BudgetDetailsScreen> { key ->
+                        BudgetDetailsScreen(
+                            budgetViewModel = budgetViewModel,
+                            budgetId = key.budgetId,
+                            goBack = {
                                 backStack.removeLastOrNull()
                             }
                         )

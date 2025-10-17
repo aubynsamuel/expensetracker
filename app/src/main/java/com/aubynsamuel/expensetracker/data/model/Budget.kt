@@ -9,8 +9,5 @@ import kotlinx.serialization.Serializable
 data class Budget(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val title: String,
-    val amount: Double,
-    val category: String,
-    val date: Long,
+    val name: String,
 )

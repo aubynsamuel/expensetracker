@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -33,20 +34,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.aubynsamuel.expensetracker.data.model.BudgetItem
 import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
-
-fun AddBudgetDialog(
+fun AddBudgetItemDialog(
     viewModel: BudgetViewModel,
+    budgetId: Int,
     onDismiss: () -> Unit,
 ) {
     var name by remember { mutableStateOf("") }
+    var price by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     Dialog(onDismissRequest = { onDismiss() }) {
@@ -65,7 +68,7 @@ fun AddBudgetDialog(
             ) {
                 // Dialog Title
                 Text(
-                    text = "Add New Budget",
+                    text = "Add New Item",
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.fillMaxWidth()
@@ -76,7 +79,7 @@ fun AddBudgetDialog(
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Budget Name") },
+                    label = { Text("Item Name") },
                     leadingIcon = {
                         Icon(
                             Icons.Default.Description,
@@ -86,13 +89,40 @@ fun AddBudgetDialog(
                     },
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Next
+                    ),
+                    singleLine = true,
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // 2. Price Field
+                TextField(
+                    value = price,
+                    onValueChange = {
+                        if (it.isEmpty() || it.matches(Regex("^\\d*\\.?\\d*$"))) {
+                            price = it
+                        }
+                    },
+                    label = { Text("Price") },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.MonetizationOn,
+                            "Price",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done
                     ),
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
+
                 Spacer(modifier = Modifier.height(16.dp))
+
                 // Action Buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -102,22 +132,37 @@ fun AddBudgetDialog(
                     TextButton(onClick = { onDismiss() }) {
                         Text("Cancel")
                     }
+
                     Spacer(modifier = Modifier.width(8.dp))
-                    // Add Expense Button
+
+                    // Add Item Button
                     Button(
                         onClick = {
-                            if (name.isBlank()) {
-                                showToast(context, "Please enter a name")
-                            } else {
-                                viewModel.addBudget(name)
-                                onDismiss()
+                            when {
+                                name.isBlank() -> showToast(context, "Please enter a name")
+                                price.isBlank() -> showToast(context, "Please enter a price")
+                                price.toDoubleOrNull() == null || price.toDouble() <= 0 -> showToast(
+                                    context,
+                                    "Please enter a valid price"
+                                )
+
+                                else -> {
+                                    viewModel.addBudgetItem(
+                                        BudgetItem(
+                                            budgetId = budgetId,
+                                            name = name,
+                                            price = price.toDouble()
+                                        )
+                                    )
+                                    onDismiss()
+                                }
                             }
                         },
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier.height(48.dp)
                     ) {
-                        Text("Add Budget")
+                        Text("Add Item")
                     }
                 }
             }

@@ -3,6 +3,7 @@ package com.aubynsamuel.expensetracker.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aubynsamuel.expensetracker.data.model.Budget
+import com.aubynsamuel.expensetracker.data.model.BudgetItem
 import com.aubynsamuel.expensetracker.data.repository.BudgetRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +14,9 @@ class BudgetViewModel(private val budgetRepository: BudgetRepository) : ViewMode
     private val _budgetsList = MutableStateFlow<List<Budget>>(emptyList())
     val budgetsList = _budgetsList.asStateFlow()
 
+    private val _budgetItems = MutableStateFlow<List<BudgetItem>>(emptyList())
+    val budgetItems = _budgetItems.asStateFlow()
+
     init {
         viewModelScope.launch {
             budgetRepository.allBudgets.collect {
@@ -21,16 +25,17 @@ class BudgetViewModel(private val budgetRepository: BudgetRepository) : ViewMode
         }
     }
 
-    fun addBudget(amount: String, category: String, description: String, date: Long) {
+    fun getBudgetItems(budgetId: Int) {
         viewModelScope.launch {
-            budgetRepository.insert(
-                Budget(
-                    title = description,
-                    amount = amount.toDouble(),
-                    category = category,
-                    date = date
-                )
-            )
+            budgetRepository.getBudgetItems(budgetId).collect {
+                _budgetItems.value = it
+            }
+        }
+    }
+
+    fun addBudget(name: String) {
+        viewModelScope.launch {
+            budgetRepository.insert(Budget(name = name))
         }
     }
 
@@ -43,6 +48,24 @@ class BudgetViewModel(private val budgetRepository: BudgetRepository) : ViewMode
     fun deleteBudget(budget: Budget) {
         viewModelScope.launch {
             budgetRepository.delete(budget)
+        }
+    }
+
+    fun addBudgetItem(budgetItem: BudgetItem) {
+        viewModelScope.launch {
+            budgetRepository.insertBudgetItem(budgetItem)
+        }
+    }
+
+    fun updateBudgetItem(budgetItem: BudgetItem) {
+        viewModelScope.launch {
+            budgetRepository.updateBudgetItem(budgetItem)
+        }
+    }
+
+    fun deleteBudgetItem(budgetItem: BudgetItem) {
+        viewModelScope.launch {
+            budgetRepository.deleteBudgetItem(budgetItem)
         }
     }
 }
