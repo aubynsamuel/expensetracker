@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -55,6 +54,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
+import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import java.text.SimpleDateFormat
@@ -177,10 +177,11 @@ fun AddExpenseDialog(
                     },
                     label = { Text("Amount") },
                     leadingIcon = {
-                        Icon(
-                            Icons.Default.MonetizationOn,
-                            "Amount",
-                            tint = MaterialTheme.colorScheme.primary
+                        Text(
+                            text = LocalSettingsState.current.currency,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
                         )
                     },
                     keyboardOptions = KeyboardOptions(

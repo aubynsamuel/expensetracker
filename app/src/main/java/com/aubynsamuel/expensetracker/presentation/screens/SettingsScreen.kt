@@ -3,12 +3,12 @@
 package com.aubynsamuel.expensetracker.presentation.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.NightlightRound
@@ -29,9 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.SettingsState
 import com.aubynsamuel.expensetracker.presentation.components.settings.ColorSchemePicker
+import com.aubynsamuel.expensetracker.presentation.components.settings.CurrencyPicker
 import com.aubynsamuel.expensetracker.presentation.components.settings.SettingItem
 import com.aubynsamuel.expensetracker.presentation.components.settings.SettingsCard
 import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
@@ -57,7 +57,6 @@ fun SettingsScreen(
     )
 }
 
-
 @Composable
 fun SettingsContent(
     settingsState: SettingsState,
@@ -71,6 +70,7 @@ fun SettingsContent(
         onBack = { toggleDrawer() }
     )
     var showSelectColorDialog by remember { mutableStateOf(false) }
+    var showCurrencyPickerDialog by remember { mutableStateOf(false) }
 
     if (showSelectColorDialog) {
         ColorSchemePicker(
@@ -78,6 +78,16 @@ fun SettingsContent(
             seedColor = settingsState.seedColor,
             onClick = { color ->
                 onStateChange(settingsState.copy(seedColor = color))
+            }
+        )
+    }
+
+    if (showCurrencyPickerDialog) {
+        CurrencyPicker(
+            onDismiss = { showCurrencyPickerDialog = false },
+            selectedCurrency = settingsState.currency,
+            onCurrencySelected = { currency ->
+                onStateChange(settingsState.copy(currency = currency))
             }
         )
     }
@@ -101,7 +111,6 @@ fun SettingsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SettingsCard(cardTitle = "Appearance") {
                 // Dark Theme
@@ -133,6 +142,16 @@ fun SettingsContent(
                     icon = Icons.Default.Palette,
                     subTitle = "Pick your theme color",
                     onClick = { showSelectColorDialog = true }
+                )
+            }
+
+            SettingsCard(cardTitle = "General") {
+                // Currency
+                SettingItem(
+                    title = "Currency",
+                    icon = Icons.Default.AttachMoney,
+                    subTitle = "Select your currency",
+                    onClick = { showCurrencyPickerDialog = true }
                 )
             }
         }
