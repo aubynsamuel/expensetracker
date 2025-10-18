@@ -22,7 +22,7 @@ class SharedPreferencesManager(context: Context) {
             darkTheme = sharedPreferences.getBoolean(DARK_THEME_KEY, false),
             seedColor = seedColor,
             blackTheme = sharedPreferences.getBoolean(BLACK_THEME_KEY, false),
-            currency = sharedPreferences.getString(CURRENCY_KEY, "USD") ?: "USD"
+            currency = sharedPreferences.getString(CURRENCY_KEY, "$") ?: "$"
         )
     }
 

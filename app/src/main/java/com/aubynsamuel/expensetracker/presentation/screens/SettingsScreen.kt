@@ -3,7 +3,6 @@
 package com.aubynsamuel.expensetracker.presentation.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.SettingsState
 import com.aubynsamuel.expensetracker.presentation.components.settings.ColorSchemePicker
 import com.aubynsamuel.expensetracker.presentation.components.settings.CurrencyPicker
@@ -113,7 +111,6 @@ fun SettingsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SettingsCard(cardTitle = "Appearance") {
                 // Dark Theme
@@ -146,7 +143,9 @@ fun SettingsContent(
                     subTitle = "Pick your theme color",
                     onClick = { showSelectColorDialog = true }
                 )
+            }
 
+            SettingsCard(cardTitle = "General") {
                 // Currency
                 SettingItem(
                     title = "Currency",

@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -29,7 +28,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.aubynsamuel.expensetracker.data.model.Expense
-import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,12 +55,6 @@ fun EditExpenseDialog(expense: Expense, onUpdateExpense: (Expense) -> Unit, onDi
                     value = amount,
                     onValueChange = { amount = it },
                     label = { Text("Amount") },
-                    leadingIcon = {
-                        Text(
-                            text = LocalSettingsState.current.currency,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next

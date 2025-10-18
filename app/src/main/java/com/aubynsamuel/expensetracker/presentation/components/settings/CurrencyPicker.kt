@@ -1,9 +1,10 @@
 package com.aubynsamuel.expensetracker.presentation.components.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -26,19 +27,19 @@ fun CurrencyPicker(
         onDismissRequest = onDismiss,
         title = { Text("Select Currency") },
         text = {
-            LazyColumn {
-                items(currencies) { currency ->
+            LazyColumn(modifier = Modifier.height(400.dp)) {
+                items(currencies) { (code, symbol) ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp),
+                            .clickable { onCurrencySelected(symbol) },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = currency)
+                        Text(text = "$code ($symbol)")
                         RadioButton(
-                            selected = currency == selectedCurrency,
-                            onClick = { onCurrencySelected(currency) }
+                            selected = symbol == selectedCurrency,
+                            onClick = { onCurrencySelected(symbol) }
                         )
                     }
                 }

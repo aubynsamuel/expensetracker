@@ -39,9 +39,7 @@ import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
-
 fun AddBudgetDialog(
     viewModel: BudgetViewModel,
     onDismiss: () -> Unit,
