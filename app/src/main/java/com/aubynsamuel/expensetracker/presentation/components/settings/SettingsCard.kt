@@ -2,8 +2,6 @@ package com.aubynsamuel.expensetracker.presentation.components.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -27,7 +25,6 @@ fun SettingsCard(cardTitle: String = "", content: @Composable () -> Unit) {
             modifier = Modifier.padding(start = 16.dp),
             style = MaterialTheme.typography.titleMediumEmphasized
         )
-        Spacer(modifier = Modifier.height(5.dp))
         Card(
             modifier = Modifier
                 .wrapContentWidth()

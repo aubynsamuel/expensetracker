@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -17,6 +18,7 @@ import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import com.aubynsamuel.expensetracker.data.repository.SettingsRepository
 import com.aubynsamuel.expensetracker.presentation.navigation.Navigation
 import com.aubynsamuel.expensetracker.presentation.theme.ExpenseTrackerTheme
+import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
@@ -60,12 +62,14 @@ class MainActivity : ComponentActivity() {
             WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
                 !settingsState.darkTheme
 
-            ExpenseTrackerTheme(settingsState = settingsState) {
-                Navigation(
-                    settingsViewModel = settingsViewModel,
-                    expensesViewModel = expensesViewModel,
-                    budgetViewModel = budgetViewModel
-                )
+            CompositionLocalProvider(LocalSettingsState provides settingsState) {
+                ExpenseTrackerTheme(settingsState = settingsState) {
+                    Navigation(
+                        settingsViewModel = settingsViewModel,
+                        expensesViewModel = expensesViewModel,
+                        budgetViewModel = budgetViewModel
+                    )
+                }
             }
         }
     }

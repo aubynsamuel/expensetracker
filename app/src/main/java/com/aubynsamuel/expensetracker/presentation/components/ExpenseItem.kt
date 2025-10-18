@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.Expense
+import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -38,6 +39,7 @@ import java.util.Locale
 @Composable
 fun ExpenseItem(expense: Expense, onEdit: (Expense) -> Unit, onDelete: (Expense) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
+    val settingsState = LocalSettingsState.current
 
     Card(
         modifier = Modifier
@@ -90,7 +92,7 @@ fun ExpenseItem(expense: Expense, onEdit: (Expense) -> Unit, onDelete: (Expense)
                     }
                 }
                 Text(
-                    text = "$${expense.amount}",
+                    text = "${settingsState.currency}${expense.amount}",
                     fontWeight = FontWeight.SemiBold,
                     color = if (expense.amount > 0) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.error

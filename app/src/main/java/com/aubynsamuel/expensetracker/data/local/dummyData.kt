@@ -1,7 +1,49 @@
 package com.aubynsamuel.expensetracker.data.local
 
 import com.aubynsamuel.expensetracker.data.model.Expense
+import java.util.Currency
+import java.util.Locale
 import java.util.concurrent.TimeUnit
+
+val currencies = listOf(
+    "GHC" to "¢",
+    "USD" to "$",
+    "EUR" to "€",
+    "JPY" to "¥",
+    "GBP" to "£",
+    "AUD" to "A$",
+    "CAD" to "C$",
+    "CHF" to "CHF",
+    "CNY" to "¥",
+    "SEK" to "kr",
+    "NZD" to "$",
+    "KRW" to "₩",
+    "SGD" to "S$",
+    "NOK" to "kr",
+    "MXN" to "$",
+    "INR" to "₹",
+    "RUB" to "₽",
+    "ZAR" to "R",
+    "TRY" to "₺",
+    "BRL" to "R$",
+    "TWD" to "NT$",
+    "DKK" to "kr",
+    "PLN" to "zł",
+    "THB" to "฿",
+    "IDR" to "Rp",
+    "HUF" to "Ft",
+    "CZK" to "Kč",
+    "ILS" to "₪",
+    "CLP" to "$",
+    "PHP" to "₱",
+    "AED" to "د.إ",
+    "COP" to "$",
+    "SAR" to "﷼",
+    "MYR" to "RM",
+    "RON" to "lei"
+)
+
+val currency = Currency.getInstance(Locale.getDefault())
 
 val dummyExpenses = listOf(
     // 1-5: Food 🍔

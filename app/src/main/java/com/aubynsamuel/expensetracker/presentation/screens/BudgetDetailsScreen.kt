@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.presentation.components.AddBudgetItemDialog
+import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,8 +86,8 @@ fun BudgetDetailsScreen(
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Total Budget: $$totalBudget")
-                Text(text = "Remaining: $$remainingBudget")
+                Text(text = "Total Budget: ${LocalSettingsState.current.currency}$totalBudget")
+                Text(text = "Remaining: ${LocalSettingsState.current.currency}$remainingBudget")
             }
             LazyColumn {
                 items(budgetItems) { item ->
@@ -106,7 +107,7 @@ fun BudgetDetailsScreen(
                             )
                             Text(text = item.name)
                         }
-                        Text(text = "$${item.price}")
+                        Text(text = "${LocalSettingsState.current.currency}${item.price}")
                     }
                 }
             }

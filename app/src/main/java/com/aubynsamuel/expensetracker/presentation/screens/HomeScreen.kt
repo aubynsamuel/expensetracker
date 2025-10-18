@@ -51,6 +51,7 @@ import com.aubynsamuel.expensetracker.presentation.components.EditExpenseDialog
 import com.aubynsamuel.expensetracker.presentation.components.ExpenseItem
 import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
 import com.aubynsamuel.expensetracker.presentation.navigation.Screen
+import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 import com.aubynsamuel.expensetracker.presentation.utils.navigate
 import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
@@ -180,7 +181,12 @@ fun HomeScreenContent(
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = String.format(Locale.getDefault(), "$%.2f", totalAmount),
+                            text = String.format(
+                                Locale.getDefault(),
+                                "%s%.2f",
+                                LocalSettingsState.current.currency,
+                                totalAmount
+                            ),
                             style = MaterialTheme.typography.displaySmall,
                             fontWeight = FontWeight.Bold
                         )
