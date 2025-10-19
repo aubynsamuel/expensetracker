@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.aubynsamuel.expensetracker.data.local.dummyExpenses
+import com.aubynsamuel.expensetracker.data.mock.dummyExpenses
 import com.aubynsamuel.expensetracker.data.model.Expense
 import ir.ehsannarmani.compose_charts.PieChart
 import ir.ehsannarmani.compose_charts.models.Pie

@@ -1,4 +1,4 @@
-package com.aubynsamuel.expensetracker.data.local
+package com.aubynsamuel.expensetracker.data.mock
 
 import com.aubynsamuel.expensetracker.data.model.Expense
 import java.util.concurrent.TimeUnit
