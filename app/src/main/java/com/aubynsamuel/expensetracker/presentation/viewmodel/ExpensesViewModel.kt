@@ -2,7 +2,7 @@ package com.aubynsamuel.expensetracker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aubynsamuel.expensetracker.data.local.dummyExpenses
+import com.aubynsamuel.expensetracker.data.mock.dummyExpenses
 import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
