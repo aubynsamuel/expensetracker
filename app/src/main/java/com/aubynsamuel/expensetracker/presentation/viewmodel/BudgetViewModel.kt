@@ -34,8 +34,8 @@ class BudgetViewModel @Inject constructor(
                 _budgetsList.value = it
             }
         }
-//        insertSampleBudgetsData()
-//        insertSampleBudgetItemsData()
+        insertSampleBudgetsData()
+        insertSampleBudgetItemsData()
     }
 
     fun getBudgetItems(budgetId: Int) {
@@ -72,6 +72,7 @@ class BudgetViewModel @Inject constructor(
         timeFrame: String,
         startDate: Long,
         endDate: Long,
+        amount: Double?,
     ) {
         viewModelScope.launch {
             budgetRepository.insert(
@@ -80,7 +81,8 @@ class BudgetViewModel @Inject constructor(
                     isOneTime = isOneTime,
                     timeFrame = timeFrame,
                     startDate = startDate,
-                    endDate = endDate
+                    endDate = endDate,
+                    amount = amount
                 )
             )
         }

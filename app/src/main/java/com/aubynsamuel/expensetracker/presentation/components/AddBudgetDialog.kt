@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.aubynsamuel.expensetracker.presentation.utils.showToast
@@ -55,6 +57,7 @@ fun AddBudgetDialog(
     onDismiss: () -> Unit,
 ) {
     var name by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
     val context = LocalContext.current
     var isOneTime by remember { mutableStateOf(false) }
     var timeFrame by remember { mutableStateOf("Month") } // Default to Month
@@ -118,12 +121,34 @@ fun AddBudgetDialog(
                     },
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Next
+                    ),
+                    singleLine = true,
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // 2. Amount Field
+                TextField(
+                    value = amount,
+                    onValueChange = { amount = it },
+                    label = { Text("Amount") },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.MonetizationOn,
+                            "Name",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done
                     ),
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
+
                 // One-time budget switch
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -214,7 +239,14 @@ fun AddBudgetDialog(
                                     }
                                 }
 
-                                viewModel.addBudget(name, isOneTime, timeFrame, startDate, endDate)
+                                viewModel.addBudget(
+                                    name,
+                                    isOneTime,
+                                    timeFrame,
+                                    startDate,
+                                    endDate,
+                                    amount.toDoubleOrNull()
+                                )
                                 onDismiss()
                             }
                         },

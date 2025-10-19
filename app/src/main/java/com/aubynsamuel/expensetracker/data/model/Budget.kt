@@ -21,4 +21,5 @@ data class Budget(
     val endDate: Long,
     @ColumnInfo(defaultValue = "0")
     val isOneTime: Boolean = false,
+    val amount: Double? = null,
 )

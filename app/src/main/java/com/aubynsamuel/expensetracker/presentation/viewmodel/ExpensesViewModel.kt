@@ -34,7 +34,7 @@ class ExpensesViewModel @Inject constructor(
                 _filteredExpensesList.value = it
             }
         }
-//        insertSampleData()
+        insertSampleData()
     }
 
     fun filterExpenses(filter: String) {

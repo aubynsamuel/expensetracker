@@ -55,13 +55,12 @@ fun BudgetsScreen(
     navigateToBudgetDetails: (Int) -> Unit,
 ) {
     val budgetsList by budgetViewModel.budgetsList.collectAsState()
-//    val budgetsList = remember { dummyBudgets }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var budgetToDelete by remember { mutableStateOf<Budget?>(null) }
     var showEditBudgetDialog by remember { mutableStateOf(false) }
     var budgetToEdit by remember { mutableStateOf<Budget?>(null) }
     var showAddBudgetDialog by remember { mutableStateOf(false) }
-    var selectedDateFilter by rememberSaveable { mutableStateOf("Today") }
+    var selectedDateFilter by rememberSaveable { mutableStateOf("Month") }
 
     if (showDeleteDialog) {
         AlertDialog(
@@ -266,6 +265,7 @@ fun BudgetsScreen(
                     items(filteredBudgets) { budget ->
                         val budgetTotals by budgetViewModel.getBudgetTotals(budget.id)
                             .collectAsState(BudgetTotals(0.0, 0.0))
+                        val totalAmount = budget.amount ?: budgetTotals.total
                         BudgetItem(
                             budget = budget,
                             onEdit = {
@@ -280,7 +280,7 @@ fun BudgetsScreen(
                                 navigateToBudgetDetails(budget.id)
                             },
                             purchasedAmount = budgetTotals.checkedTotal,
-                            totalAmount = budgetTotals.total
+                            totalAmount = totalAmount
                         )
                     }
                 }

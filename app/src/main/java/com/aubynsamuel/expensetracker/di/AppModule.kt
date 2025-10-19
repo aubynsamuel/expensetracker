@@ -1,7 +1,6 @@
 package com.aubynsamuel.expensetracker.di
 
 import android.content.Context
-import androidx.room.Room
 import com.aubynsamuel.expensetracker.data.local.BudgetDao
 import com.aubynsamuel.expensetracker.data.local.BudgetItemDao
 import com.aubynsamuel.expensetracker.data.local.ExpenseDao
@@ -24,11 +23,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideExpenseDatabase(@ApplicationContext context: Context): ExpenseDatabase {
-        return Room.databaseBuilder(
-            context,
-            ExpenseDatabase::class.java,
-            "expense_database"
-        ).fallbackToDestructiveMigration(false).build()
+        return ExpenseDatabase.getDatabase(context)
     }
 
     @Provides
