@@ -5,11 +5,13 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -134,7 +136,10 @@ fun BudgetDetailsScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showAddBudgetItemDialog = true }) {
+            FloatingActionButton(
+                onClick = { showAddBudgetItemDialog = true },
+                modifier = Modifier.offset(x = (-10).dp)
+            ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Budget Item")
             }
         }
@@ -244,7 +249,8 @@ fun BudgetDetailsScreen(
                 )
 
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    contentPadding = PaddingValues(bottom = 80.dp)
                 ) {
                     items(budgetItems) { item ->
                         var showOptions by remember { mutableStateOf(false) }
