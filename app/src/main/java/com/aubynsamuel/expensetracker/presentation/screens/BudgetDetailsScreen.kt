@@ -34,7 +34,6 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -49,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.BudgetItem
 import com.aubynsamuel.expensetracker.presentation.components.AddBudgetItemDialog
+import com.aubynsamuel.expensetracker.presentation.components.EditBudgetItemDialog
 import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
 
@@ -315,49 +315,4 @@ fun BudgetDetailsScreen(
             }
         }
     }
-}
-
-@Composable
-fun EditBudgetItemDialog(
-    budgetItem: BudgetItem,
-    onUpdate: (BudgetItem) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    var name by remember { mutableStateOf(budgetItem.name) }
-    var price by remember { mutableStateOf(budgetItem.price.toString()) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Edit Budget Item") },
-        text = {
-            Column {
-                TextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Item Name") }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                TextField(
-                    value = price,
-                    onValueChange = { price = it },
-                    label = { Text("Price") }
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    onUpdate(budgetItem.copy(name = name, price = price.toDouble()))
-                    onDismiss()
-                }
-            ) {
-                Text("Update")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
 }
