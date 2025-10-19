@@ -24,6 +24,6 @@ interface BudgetDao {
     @Delete
     suspend fun delete(budget: Budget)
 
-    @Query("SELECT * FROM budgets")
+    @Query("SELECT * FROM budgets ORDER BY startDate DESC")
     fun getAllBudgets(): Flow<List<Budget>>
 }

@@ -17,12 +17,17 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +52,11 @@ fun AddBudgetDialog(
 ) {
     var name by remember { mutableStateOf("") }
     val context = LocalContext.current
+    var isOneTime by remember { mutableStateOf(false) }
+    var timeFrame by remember { mutableStateOf("Month") } // Default to Month
+    val datePickerState = rememberDatePickerState(
+        initialDisplayMode = DisplayMode.Picker
+    )
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -90,6 +101,41 @@ fun AddBudgetDialog(
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
+                // One-time budget switch
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("One-time budget")
+                    Switch(
+                        checked = isOneTime,
+                        onCheckedChange = { isOneTime = it }
+                    )
+                }
+
+                if (isOneTime) {
+                    DatePicker(
+                        state = datePickerState,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    // Time frame selection
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        listOf("Day", "Week", "Month").forEach { option ->
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                RadioButton(
+                                    selected = timeFrame == option,
+                                    onClick = { timeFrame = option }
+                                )
+                                Text(option)
+                            }
+                        }
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 // Action Buttons
                 Row(
@@ -107,7 +153,42 @@ fun AddBudgetDialog(
                             if (name.isBlank()) {
                                 showToast(context, "Please enter a name")
                             } else {
-                                viewModel.addBudget(name)
+                                val calendar = Calendar.getInstance()
+                                val startDate: Long
+                                val endDate: Long
+
+                                if (isOneTime) {
+                                    startDate = datePickerState.selectedDateMillis
+                                        ?: System.currentTimeMillis()
+                                    endDate = startDate
+                                } else {
+                                    when (timeFrame) {
+                                        "Day" -> {
+                                            startDate = calendar.timeInMillis
+                                            calendar.add(Calendar.DAY_OF_YEAR, 1)
+                                            endDate = calendar.timeInMillis
+                                        }
+
+                                        "Week" -> {
+                                            calendar.set(
+                                                Calendar.DAY_OF_WEEK,
+                                                calendar.firstDayOfWeek
+                                            )
+                                            startDate = calendar.timeInMillis
+                                            calendar.add(Calendar.WEEK_OF_YEAR, 1)
+                                            endDate = calendar.timeInMillis
+                                        }
+
+                                        else -> { // Month
+                                            calendar.set(Calendar.DAY_OF_MONTH, 1)
+                                            startDate = calendar.timeInMillis
+                                            calendar.add(Calendar.MONTH, 1)
+                                            endDate = calendar.timeInMillis
+                                        }
+                                    }
+                                }
+
+                                viewModel.addBudget(name, isOneTime, timeFrame, startDate, endDate)
                                 onDismiss()
                             }
                         },

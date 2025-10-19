@@ -1,6 +1,7 @@
 package com.aubynsamuel.expensetracker.data.local
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -12,8 +13,11 @@ import com.aubynsamuel.expensetracker.data.model.Expense
 
 @Database(
     entities = [Expense::class, Budget::class, BudgetItem::class],
-    version = 4,
-    exportSchema = true
+    version = 5,
+    exportSchema = true,
+    autoMigrations = [
+        AutoMigration(from = 4, to = 5)
+    ]
 )
 abstract class ExpenseDatabase : RoomDatabase() {
 
