@@ -34,8 +34,8 @@ class BudgetViewModel @Inject constructor(
                 _budgetsList.value = it
             }
         }
-        insertSampleBudgetsData()
-        insertSampleBudgetItemsData()
+//        insertSampleBudgetsData()
+//        insertSampleBudgetItemsData()
     }
 
     fun getBudgetItems(budgetId: Int) {
