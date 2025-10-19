@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.aubynsamuel.expensetracker.data.mock.dummyBudgets
 import com.aubynsamuel.expensetracker.data.model.Budget
 import com.aubynsamuel.expensetracker.data.model.BudgetTotals
 import com.aubynsamuel.expensetracker.presentation.components.AddBudgetDialog
@@ -52,8 +51,8 @@ fun BudgetsScreen(
     goBack: () -> Unit,
     navigateToBudgetDetails: (Int) -> Unit,
 ) {
-//    val budgetsList by budgetViewModel.budgetsList.collectAsState()
-    val budgetsList = remember { dummyBudgets }
+    val budgetsList by budgetViewModel.budgetsList.collectAsState()
+//    val budgetsList = remember { dummyBudgets }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var budgetToDelete by remember { mutableStateOf<Budget?>(null) }
     var showEditBudgetDialog by remember { mutableStateOf(false) }

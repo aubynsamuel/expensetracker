@@ -226,13 +226,13 @@ fun BudgetDetailsScreen(
                     Text(
                         text = "No items yet",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Tap + to add your first item",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             } else {
@@ -244,7 +244,7 @@ fun BudgetDetailsScreen(
                 )
 
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     items(budgetItems) { item ->
                         var showOptions by remember { mutableStateOf(false) }
@@ -262,7 +262,8 @@ fun BudgetDetailsScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(12.dp),
+                                    .padding(vertical = 8.dp)
+                                    .padding(end = 12.dp, start = 0.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -279,7 +280,6 @@ fun BudgetDetailsScreen(
                                     Text(
                                         text = item.name,
                                         style = MaterialTheme.typography.bodyLarge,
-                                        modifier = Modifier.padding(start = 8.dp)
                                     )
                                 }
                                 Text(
