@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.aubynsamuel.expensetracker.data.model.Budget
@@ -44,6 +45,7 @@ import java.util.Locale
 @Composable
 fun EditBudgetDialog(budget: Budget, onUpdateBudget: (Budget) -> Unit, onDismiss: () -> Unit) {
     var name by remember { mutableStateOf(budget.name) }
+    var amount by remember { mutableStateOf(budget.amount?.toString() ?: "") }
     var isOneTime by remember { mutableStateOf(budget.isOneTime) }
     var timeFrame by remember { mutableStateOf(budget.timeFrame) }
     val isNameValid by remember(name) { mutableStateOf(name.isNotBlank()) }
@@ -95,6 +97,18 @@ fun EditBudgetDialog(budget: Budget, onUpdateBudget: (Budget) -> Unit, onDismiss
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = ImeAction.Next
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                TextField(
+                    value = amount,
+                    onValueChange = { amount = it },
+                    label = { Text("Amount") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done
                     ),
                     modifier = Modifier.fillMaxWidth()
@@ -188,7 +202,8 @@ fun EditBudgetDialog(budget: Budget, onUpdateBudget: (Budget) -> Unit, onDismiss
                                     isOneTime = isOneTime,
                                     timeFrame = if (isOneTime) "" else timeFrame,
                                     startDate = newStartDate,
-                                    endDate = newEndDate
+                                    endDate = newEndDate,
+                                    amount = amount.toDoubleOrNull()
                                 )
                             )
                             onDismiss()

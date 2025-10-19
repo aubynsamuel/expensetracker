@@ -1,7 +1,6 @@
 package com.aubynsamuel.expensetracker.data.local
 
 import android.content.Context
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -13,11 +12,8 @@ import com.aubynsamuel.expensetracker.data.model.Expense
 
 @Database(
     entities = [Expense::class, Budget::class, BudgetItem::class],
-    version = 5,
-    exportSchema = true,
-    autoMigrations = [
-        AutoMigration(from = 4, to = 5)
-    ]
+    version = 6,
+    exportSchema = true
 )
 abstract class ExpenseDatabase : RoomDatabase() {
 
@@ -35,11 +31,17 @@ abstract class ExpenseDatabase : RoomDatabase() {
                     context.applicationContext,
                     ExpenseDatabase::class.java,
                     "expense_database"
-                ).addMigrations(MIGRATION_2_3, MIGRATION_3_4).build()
+                ).addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_5_6).build()
                 INSTANCE = instance
                 instance
             }
         }
+    }
+}
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE budgets ADD COLUMN amount REAL")
     }
 }
 
