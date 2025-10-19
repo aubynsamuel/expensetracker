@@ -34,6 +34,7 @@ class ExpensesViewModel @Inject constructor(
                 _filteredExpensesList.value = it
             }
         }
+//        insertSampleData()
     }
 
     fun filterExpenses(filter: String) {
@@ -42,12 +43,6 @@ class ExpensesViewModel @Inject constructor(
             "Week" -> _filteredExpensesList.value = filterExpensesByThisWeek(expensesList.value)
             "Month" -> _filteredExpensesList.value = filterExpensesByThisMonth(expensesList.value)
             else -> _filteredExpensesList.value = expensesList.value
-        }
-    }
-
-    fun insertSampleData() {
-        viewModelScope.launch {
-            expenseRepository.insertAll(dummyExpenses)
         }
     }
 
@@ -146,6 +141,12 @@ class ExpensesViewModel @Inject constructor(
         val endOfMonth = calendar.timeInMillis
 
         return expenses.filter { it.date in startOfMonth..endOfMonth }
+    }
+
+    fun insertSampleData() {
+        viewModelScope.launch {
+            expenseRepository.insertAll(dummyExpenses)
+        }
     }
 }
 
