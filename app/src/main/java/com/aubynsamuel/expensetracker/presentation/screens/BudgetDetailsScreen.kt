@@ -70,248 +70,257 @@ fun BudgetDetailsScreen(
 
     budgetViewModel.getBudgetItems(budgetId)
 
-    val totalBudget = budgetItems.sumOf { it.price }
-    val spentAmount = budgetItems.filter { it.isChecked }.sumOf { it.price }
-    val remainingBudget = totalBudget - spentAmount
-    val progressPercentage =
-        if (totalBudget > 0) spentAmount.toFloat() / totalBudget.toFloat() else 0f
-    val animatedProgress by animateFloatAsState(
-        targetValue = progressPercentage,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-    )
-
-    if (showAddBudgetItemDialog) {
-        AddBudgetItemDialog(
-            viewModel = budgetViewModel,
-            budgetId = budgetId,
-            onDismiss = { showAddBudgetItemDialog = false }
-        )
+    val budget by remember(budgetId, budgetViewModel.budgetsList) {
+        mutableStateOf(budgetViewModel.budgetsList.value.find { it.id == budgetId })
     }
 
-    if (showEditBudgetItemDialog) {
-        budgetItemToEdit?.let { it ->
-            EditBudgetItemDialog(
-                budgetItem = it,
-                onUpdate = { budgetViewModel.updateBudgetItem(it) },
-                onDismiss = { showEditBudgetItemDialog = false }
+    budget?.let { budget ->
+        val totalBudget = budget.amount ?: budgetItems.sumOf { it.price }
+        val spentAmount = budgetItems.filter { it.isChecked }.sumOf { it.price }
+        val remainingBudget = totalBudget - spentAmount
+        val progressPercentage =
+            if (totalBudget > 0) spentAmount.toFloat() / totalBudget.toFloat() else 0f
+        val animatedProgress by animateFloatAsState(
+            targetValue = progressPercentage,
+            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+        )
+
+        if (showAddBudgetItemDialog) {
+            AddBudgetItemDialog(
+                viewModel = budgetViewModel,
+                budgetId = budgetId,
+                onDismiss = { showAddBudgetItemDialog = false }
             )
         }
-    }
 
-    if (showDeleteBudgetItemDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteBudgetItemDialog = false },
-            title = { Text("Delete Budget Item") },
-            text = { Text("Are you sure you want to delete this item?") },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        budgetItemToDelete?.let { budgetViewModel.deleteBudgetItem(it) }
-                        showDeleteBudgetItemDialog = false
+        if (showEditBudgetItemDialog) {
+            budgetItemToEdit?.let { item ->
+                EditBudgetItemDialog(
+                    budgetItem = item,
+                    onUpdate = { budgetViewModel.updateBudgetItem(item) },
+                    onDismiss = { showEditBudgetItemDialog = false }
+                )
+            }
+        }
+
+        if (showDeleteBudgetItemDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteBudgetItemDialog = false },
+                title = { Text("Delete Budget Item") },
+                text = { Text("Are you sure you want to delete this item?") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            budgetItemToDelete?.let { item -> budgetViewModel.deleteBudgetItem(item) }
+                            showDeleteBudgetItemDialog = false
+                        }
+                    ) {
+                        Text("Delete")
                     }
-                ) {
-                    Text("Delete")
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteBudgetItemDialog = false }) {
+                        Text("Cancel")
+                    }
                 }
+            )
+        }
+
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(budget.name) },
+                    navigationIcon = {
+                        IconButton(onClick = goBack) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back button"
+                            )
+                        }
+                    }
+                )
             },
-            dismissButton = {
-                TextButton(onClick = { showDeleteBudgetItemDialog = false }) {
-                    Text("Cancel")
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { showAddBudgetItemDialog = true },
+                    modifier = Modifier.offset(x = (-10).dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Add Budget Item")
                 }
             }
-        )
-    }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Budget Details") },
-                navigationIcon = {
-                    IconButton(onClick = goBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back button"
+                // Budget Summary Card
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text(
+                                    text = "Total Budget",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    text = "${LocalSettingsState.current.currency}$totalBudget",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(
+                                    text = "Remaining",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    text = "${LocalSettingsState.current.currency}$remainingBudget",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (remainingBudget >= 0)
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    else
+                                        MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        LinearProgressIndicator(
+                            progress = { animatedProgress.coerceIn(0f, 1f) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(4.dp)),
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = "Spent: ${LocalSettingsState.current.currency}$spentAmount (${(progressPercentage * 100).toInt()}%)",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showAddBudgetItemDialog = true },
-                modifier = Modifier.offset(x = (-10).dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Budget Item")
-            }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-        ) {
-            Spacer(modifier = Modifier.height(16.dp))
 
-            // Budget Summary Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                Spacer(modifier = Modifier.height(24.dp))
+
+                if (budgetItems.isEmpty()) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Column {
-                            Text(
-                                text = "Total Budget",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Text(
-                                text = "${LocalSettingsState.current.currency}$totalBudget",
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
-                        Column(horizontalAlignment = Alignment.End) {
-                            Text(
-                                text = "Remaining",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Text(
-                                text = "${LocalSettingsState.current.currency}$remainingBudget",
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = if (remainingBudget >= 0)
-                                    MaterialTheme.colorScheme.onPrimaryContainer
-                                else
-                                    MaterialTheme.colorScheme.error
-                            )
-                        }
+                        Text(
+                            text = "No items yet",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Tap + to add your first item",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    LinearProgressIndicator(
-                        progress = { animatedProgress.coerceIn(0f, 1f) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp)
-                            .clip(RoundedCornerShape(4.dp)),
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
+                } else {
                     Text(
-                        text = "Spent: ${LocalSettingsState.current.currency}$spentAmount (${(progressPercentage * 100).toInt()}%)",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        text = "Items",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
-                }
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            if (budgetItems.isEmpty()) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "No items yet",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Tap + to add your first item",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            } else {
-                Text(
-                    text = "Items",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
-                    contentPadding = PaddingValues(bottom = 80.dp)
-                ) {
-                    items(budgetItems) { item ->
-                        var showOptions by remember { mutableStateOf(false) }
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable(onClick = { showOptions = !showOptions }),
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (item.isChecked)
-                                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                                else
-                                    MaterialTheme.colorScheme.surface
-                            )
-                        ) {
-                            Row(
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(5.dp),
+                        contentPadding = PaddingValues(bottom = 80.dp)
+                    ) {
+                        items(budgetItems) { item ->
+                            var showOptions by remember { mutableStateOf(false) }
+                            Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
-                                    .padding(end = 12.dp, start = 0.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                    .clickable(onClick = { showOptions = !showOptions }),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (item.isChecked)
+                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                    else
+                                        MaterialTheme.colorScheme.surface
+                                )
                             ) {
                                 Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp)
+                                        .padding(end = 12.dp, start = 0.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Checkbox(
-                                        checked = item.isChecked,
-                                        onCheckedChange = {
-                                            budgetViewModel.updateBudgetItem(item.copy(isChecked = it))
-                                        }
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Checkbox(
+                                            checked = item.isChecked,
+                                            onCheckedChange = {
+                                                budgetViewModel.updateBudgetItem(item.copy(isChecked = it))
+                                            }
+                                        )
+                                        Text(
+                                            text = item.name,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                        )
+                                    }
                                     Text(
-                                        text = item.name,
+                                        text = "${LocalSettingsState.current.currency}${item.price}",
                                         style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                 }
-                                Text(
-                                    text = "${LocalSettingsState.current.currency}${item.price}",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
 
-                            AnimatedVisibility(showOptions) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.End
-                                ) {
-                                    IconButton(onClick = {
-                                        budgetItemToEdit = item
-                                        showEditBudgetItemDialog = true
-                                    }) {
-                                        Icon(Icons.Default.Edit, contentDescription = "Edit")
-                                    }
-                                    IconButton(onClick = {
-                                        budgetItemToDelete = item
-                                        showDeleteBudgetItemDialog = true
-                                    }) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Delete")
+                                AnimatedVisibility(showOptions) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
+                                        IconButton(onClick = {
+                                            budgetItemToEdit = item
+                                            showEditBudgetItemDialog = true
+                                        }) {
+                                            Icon(Icons.Default.Edit, contentDescription = "Edit")
+                                        }
+                                        IconButton(onClick = {
+                                            budgetItemToDelete = item
+                                            showDeleteBudgetItemDialog = true
+                                        }) {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                contentDescription = "Delete"
+                                            )
+                                        }
                                     }
                                 }
                             }
