@@ -103,12 +103,14 @@ class BudgetViewModel @Inject constructor(
         }
     }
 
+    @Suppress("unused")
     fun insertSampleBudgetsData() {
         viewModelScope.launch {
             budgetRepository.insertAllBudgets(dummyBudgets)
         }
     }
 
+    @Suppress("unused")
     fun insertSampleBudgetItemsData() {
         viewModelScope.launch {
             budgetRepository.insertAllBudgetItems(dummyBudgetItems)

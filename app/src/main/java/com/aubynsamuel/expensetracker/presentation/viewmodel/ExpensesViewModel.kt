@@ -143,6 +143,7 @@ class ExpensesViewModel @Inject constructor(
         return expenses.filter { it.date in startOfMonth..endOfMonth }
     }
 
+    @Suppress("unused")
     fun insertSampleData() {
         viewModelScope.launch {
             expenseRepository.insertAll(dummyExpenses)
