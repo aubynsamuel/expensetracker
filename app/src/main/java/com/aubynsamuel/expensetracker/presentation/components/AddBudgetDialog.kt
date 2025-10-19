@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,7 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +61,25 @@ fun AddBudgetDialog(
     val datePickerState = rememberDatePickerState(
         initialDisplayMode = DisplayMode.Picker
     )
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -115,10 +138,13 @@ fun AddBudgetDialog(
                 }
 
                 if (isOneTime) {
-                    DatePicker(
-                        state = datePickerState,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Button(onClick = { showDatePicker = true }) {
+                        Text(
+                            text = datePickerState.selectedDateMillis?.let {
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(it))
+                            } ?: "Select Date"
+                        )
+                    }
                 } else {
                     // Time frame selection
                     Row(
