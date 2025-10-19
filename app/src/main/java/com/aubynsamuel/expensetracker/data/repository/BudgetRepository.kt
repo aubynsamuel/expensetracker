@@ -4,6 +4,7 @@ import com.aubynsamuel.expensetracker.data.local.BudgetDao
 import com.aubynsamuel.expensetracker.data.local.BudgetItemDao
 import com.aubynsamuel.expensetracker.data.model.Budget
 import com.aubynsamuel.expensetracker.data.model.BudgetItem
+import com.aubynsamuel.expensetracker.data.model.BudgetTotals
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -27,6 +28,10 @@ class BudgetRepository @Inject constructor(
 
     fun getBudgetItems(budgetId: Int): Flow<List<BudgetItem>> {
         return budgetItemDao.getBudgetItems(budgetId)
+    }
+
+    fun getBudgetTotalsForMonth(startOfMonth: Long, endOfMonth: Long): Flow<BudgetTotals> {
+        return budgetDao.getBudgetTotalsForMonth(startOfMonth, endOfMonth)
     }
 
     suspend fun insertBudgetItem(budgetItem: BudgetItem) {

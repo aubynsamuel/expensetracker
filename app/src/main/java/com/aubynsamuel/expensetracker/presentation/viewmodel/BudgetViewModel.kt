@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,6 +52,18 @@ class BudgetViewModel @Inject constructor(
             val checkedTotal = items.filter { it.isChecked }.sumOf { it.price }
             BudgetTotals(total, checkedTotal)
         }
+    }
+
+    fun getBudgetTotalsForCurrentMonth(): Flow<BudgetTotals> {
+        val calendar = Calendar.getInstance()
+        val startOfMonth = calendar.apply { set(Calendar.DAY_OF_MONTH, 1) }.timeInMillis
+        val endOfMonth = calendar.apply {
+            add(Calendar.MONTH, 1); set(
+            Calendar.DAY_OF_MONTH,
+            1
+        ); add(Calendar.DATE, -1)
+        }.timeInMillis
+        return budgetRepository.getBudgetTotalsForMonth(startOfMonth, endOfMonth)
     }
 
     fun addBudget(
