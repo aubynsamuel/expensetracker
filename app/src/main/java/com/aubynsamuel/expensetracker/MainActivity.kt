@@ -9,23 +9,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.aubynsamuel.expensetracker.data.local.ExpenseDatabase
-import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
-import com.aubynsamuel.expensetracker.data.repository.BudgetRepository
-import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
-import com.aubynsamuel.expensetracker.data.repository.SettingsRepository
 import com.aubynsamuel.expensetracker.presentation.navigation.Navigation
 import com.aubynsamuel.expensetracker.presentation.theme.ExpenseTrackerTheme
 import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.ExpensesViewModel
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
-import com.aubynsamuel.expensetracker.presentation.viewmodel.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var keepSplash = true
 
@@ -40,23 +36,10 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
-        val sharedPreferencesManager = SharedPreferencesManager(this)
-        val database = ExpenseDatabase.getDatabase(this)
-        val settingsRepository = SettingsRepository(sharedPreferencesManager)
-        val expenseRepository =
-            ExpenseRepository(database.expenseDao(), sharedPreferencesManager)
-        val budgetRepository = BudgetRepository(database.budgetDao(), database.budgetItemDao())
-
         setContent {
-            val settingsViewModel: SettingsViewModel = viewModel(
-                factory = ViewModelFactory(expenseRepository, settingsRepository, budgetRepository)
-            )
-            val expensesViewModel: ExpensesViewModel = viewModel(
-                factory = ViewModelFactory(expenseRepository, settingsRepository, budgetRepository)
-            )
-            val budgetViewModel: BudgetViewModel = viewModel(
-                factory = ViewModelFactory(expenseRepository, settingsRepository, budgetRepository)
-            )
+            val settingsViewModel: SettingsViewModel = hiltViewModel()
+            val expensesViewModel: ExpensesViewModel = hiltViewModel()
+            val budgetViewModel: BudgetViewModel = hiltViewModel()
             val settingsState by settingsViewModel.settingsState.collectAsState()
 
             WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =

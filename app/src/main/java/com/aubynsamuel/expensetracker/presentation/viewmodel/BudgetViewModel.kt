@@ -6,13 +6,18 @@ import com.aubynsamuel.expensetracker.data.model.Budget
 import com.aubynsamuel.expensetracker.data.model.BudgetItem
 import com.aubynsamuel.expensetracker.data.model.BudgetTotals
 import com.aubynsamuel.expensetracker.data.repository.BudgetRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BudgetViewModel(private val budgetRepository: BudgetRepository) : ViewModel() {
+@HiltViewModel
+class BudgetViewModel @Inject constructor(
+    private val budgetRepository: BudgetRepository,
+) : ViewModel() {
 
     private val _budgetsList = MutableStateFlow<List<Budget>>(emptyList())
     val budgetsList = _budgetsList.asStateFlow()
