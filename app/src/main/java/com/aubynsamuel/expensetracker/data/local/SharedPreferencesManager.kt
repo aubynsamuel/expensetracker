@@ -13,7 +13,7 @@ class SharedPreferencesManager(context: Context) {
     fun getSettings(): SettingsState {
         val storedColorValue = sharedPreferences.getLong(SEED_COLOR_KEY, -1L)
         val seedColor = if (storedColorValue == -1L) {
-            SeedColors[1]
+            SeedColors[0]
         } else {
             Color(storedColorValue.toULong())
         }
@@ -21,7 +21,7 @@ class SharedPreferencesManager(context: Context) {
         return SettingsState(
             darkTheme = sharedPreferences.getBoolean(DARK_THEME_KEY, false),
             seedColor = seedColor,
-            blackTheme = sharedPreferences.getBoolean(BLACK_THEME_KEY, false),
+            blackTheme = sharedPreferences.getBoolean(BLACK_THEME_KEY, true),
             currency = sharedPreferences.getString(CURRENCY_KEY, "$") ?: "$"
         )
     }
