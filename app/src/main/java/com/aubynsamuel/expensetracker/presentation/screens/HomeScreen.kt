@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -153,7 +154,7 @@ fun HomeScreenContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddExpenseDialog = true },
-                modifier = Modifier.offset(x = (-10).dp, y = (-20).dp)
+                modifier = Modifier.offset(x = (-10).dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Expense")
             }
@@ -164,7 +165,10 @@ fun HomeScreenContent(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = paddingValues
+            contentPadding = PaddingValues(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding() + 80.dp
+            )
         ) {
             item {
                 Card(

@@ -167,7 +167,7 @@ fun ExpensesScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(
                     top = 16.dp,
-                    bottom = paddingValues.calculateBottomPadding() + 10.dp
+                    bottom = paddingValues.calculateBottomPadding() + 80.dp
                 ),
                 modifier = Modifier.clip(
                     shape = RoundedCornerShape(20.dp)

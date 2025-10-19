@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -117,7 +118,10 @@ fun BudgetsScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showAddBudgetDialog = true }) {
+            FloatingActionButton(
+                onClick = { showAddBudgetDialog = true },
+                modifier = Modifier.offset(x = (-10).dp)
+            ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Budget")
             }
         }
@@ -256,7 +260,7 @@ fun BudgetsScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(
                         top = 16.dp,
-                        bottom = paddingValues.calculateBottomPadding() + 10.dp
+                        bottom = paddingValues.calculateBottomPadding() + 80.dp
                     ),
                 ) {
                     items(filteredBudgets) { budget ->
