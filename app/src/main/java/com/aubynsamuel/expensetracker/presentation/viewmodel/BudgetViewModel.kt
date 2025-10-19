@@ -2,6 +2,8 @@ package com.aubynsamuel.expensetracker.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aubynsamuel.expensetracker.data.mock.dummyBudgetItems
+import com.aubynsamuel.expensetracker.data.mock.dummyBudgets
 import com.aubynsamuel.expensetracker.data.model.Budget
 import com.aubynsamuel.expensetracker.data.model.BudgetItem
 import com.aubynsamuel.expensetracker.data.model.BudgetTotals
@@ -31,6 +33,8 @@ class BudgetViewModel @Inject constructor(
                 _budgetsList.value = it
             }
         }
+//        insertSampleBudgetsData()
+//        insertSampleBudgetItemsData()
     }
 
     fun getBudgetItems(budgetId: Int) {
@@ -96,6 +100,18 @@ class BudgetViewModel @Inject constructor(
     fun deleteBudgetItem(budgetItem: BudgetItem) {
         viewModelScope.launch {
             budgetRepository.deleteBudgetItem(budgetItem)
+        }
+    }
+
+    fun insertSampleBudgetsData() {
+        viewModelScope.launch {
+            budgetRepository.insertAllBudgets(dummyBudgets)
+        }
+    }
+
+    fun insertSampleBudgetItemsData() {
+        viewModelScope.launch {
+            budgetRepository.insertAllBudgetItems(dummyBudgetItems)
         }
     }
 }

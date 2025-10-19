@@ -40,4 +40,12 @@ class BudgetRepository @Inject constructor(
     suspend fun deleteBudgetItem(budgetItem: BudgetItem) {
         budgetItemDao.delete(budgetItem)
     }
+
+    suspend fun insertAllBudgets(budgets: List<Budget>) {
+        budgetDao.insertAll(budgets)
+    }
+
+    suspend fun insertAllBudgetItems(budgetItems: List<BudgetItem>) {
+        budgetItemDao.insertAll(budgetItems)
+    }
 }
