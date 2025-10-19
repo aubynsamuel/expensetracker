@@ -1,5 +1,6 @@
 package com.aubynsamuel.expensetracker.presentation.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -28,6 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.aubynsamuel.expensetracker.data.model.BudgetItem
 import com.aubynsamuel.expensetracker.presentation.components.AddBudgetItemDialog
 import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
@@ -53,6 +61,10 @@ fun BudgetDetailsScreen(
 ) {
     val budgetItems by budgetViewModel.budgetItems.collectAsState()
     var showAddBudgetItemDialog by remember { mutableStateOf(false) }
+    var showEditBudgetItemDialog by remember { mutableStateOf(false) }
+    var showDeleteBudgetItemDialog by remember { mutableStateOf(false) }
+    var budgetItemToEdit by remember { mutableStateOf<BudgetItem?>(null) }
+    var budgetItemToDelete by remember { mutableStateOf<BudgetItem?>(null) }
 
     budgetViewModel.getBudgetItems(budgetId)
 
@@ -71,6 +83,39 @@ fun BudgetDetailsScreen(
             viewModel = budgetViewModel,
             budgetId = budgetId,
             onDismiss = { showAddBudgetItemDialog = false }
+        )
+    }
+
+    if (showEditBudgetItemDialog) {
+        budgetItemToEdit?.let { it ->
+            EditBudgetItemDialog(
+                budgetItem = it,
+                onUpdate = { budgetViewModel.updateBudgetItem(it) },
+                onDismiss = { showEditBudgetItemDialog = false }
+            )
+        }
+    }
+
+    if (showDeleteBudgetItemDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteBudgetItemDialog = false },
+            title = { Text("Delete Budget Item") },
+            text = { Text("Are you sure you want to delete this item?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        budgetItemToDelete?.let { budgetViewModel.deleteBudgetItem(it) }
+                        showDeleteBudgetItemDialog = false
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteBudgetItemDialog = false }) {
+                    Text("Cancel")
+                }
+            }
         )
     }
 
@@ -202,14 +247,11 @@ fun BudgetDetailsScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(budgetItems) { item ->
+                        var showOptions by remember { mutableStateOf(false) }
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable(onClick = {
-                                    budgetViewModel.updateBudgetItem(
-                                        item.copy(isChecked = !item.isChecked)
-                                    )
-                                }),
+                                .clickable(onClick = { showOptions = !showOptions }),
                             colors = CardDefaults.cardColors(
                                 containerColor = if (item.isChecked)
                                     MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
@@ -247,6 +289,26 @@ fun BudgetDetailsScreen(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
+
+                            AnimatedVisibility(showOptions) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    IconButton(onClick = {
+                                        budgetItemToEdit = item
+                                        showEditBudgetItemDialog = true
+                                    }) {
+                                        Icon(Icons.Default.Edit, contentDescription = "Edit")
+                                    }
+                                    IconButton(onClick = {
+                                        budgetItemToDelete = item
+                                        showDeleteBudgetItemDialog = true
+                                    }) {
+                                        Icon(Icons.Default.Delete, contentDescription = "Delete")
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -255,4 +317,47 @@ fun BudgetDetailsScreen(
     }
 }
 
-// TODO: Add items deletion
+@Composable
+fun EditBudgetItemDialog(
+    budgetItem: BudgetItem,
+    onUpdate: (BudgetItem) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var name by remember { mutableStateOf(budgetItem.name) }
+    var price by remember { mutableStateOf(budgetItem.price.toString()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Budget Item") },
+        text = {
+            Column {
+                TextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Item Name") }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = price,
+                    onValueChange = { price = it },
+                    label = { Text("Price") }
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onUpdate(budgetItem.copy(name = name, price = price.toDouble()))
+                    onDismiss()
+                }
+            ) {
+                Text("Update")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
