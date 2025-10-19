@@ -5,8 +5,9 @@ import com.aubynsamuel.expensetracker.data.local.BudgetItemDao
 import com.aubynsamuel.expensetracker.data.model.Budget
 import com.aubynsamuel.expensetracker.data.model.BudgetItem
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class BudgetRepository(
+class BudgetRepository @Inject constructor(
     private val budgetDao: BudgetDao,
     private val budgetItemDao: BudgetItemDao,
 ) {

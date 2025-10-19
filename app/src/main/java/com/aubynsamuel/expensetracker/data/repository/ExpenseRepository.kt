@@ -4,8 +4,9 @@ import com.aubynsamuel.expensetracker.data.local.ExpenseDao
 import com.aubynsamuel.expensetracker.data.local.SharedPreferencesManager
 import com.aubynsamuel.expensetracker.data.model.Expense
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class ExpenseRepository(
+class ExpenseRepository @Inject constructor(
     private val expenseDao: ExpenseDao,
     private val sharedPreferencesManager: SharedPreferencesManager,
 ) {

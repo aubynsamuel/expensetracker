@@ -5,13 +5,18 @@ import androidx.lifecycle.viewModelScope
 import com.aubynsamuel.expensetracker.data.mock.dummyExpenses
 import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.data.repository.ExpenseRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import javax.inject.Inject
 
-class ExpensesViewModel(private val expenseRepository: ExpenseRepository) : ViewModel() {
+@HiltViewModel
+class ExpensesViewModel @Inject constructor(
+    private val expenseRepository: ExpenseRepository,
+) : ViewModel() {
 
     private val _expensesList = MutableStateFlow<List<Expense>>(emptyList())
     val expensesList = _expensesList.asStateFlow()
