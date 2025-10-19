@@ -224,7 +224,7 @@ fun BudgetsScreen(
                     modifier = Modifier.clip(
                         shape = RoundedCornerShape(20.dp)
                     ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(
                         top = 16.dp,
                         bottom = paddingValues.calculateBottomPadding() + 10.dp
