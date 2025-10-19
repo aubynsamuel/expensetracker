@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aubynsamuel.expensetracker.data.model.Budget
 import com.aubynsamuel.expensetracker.data.model.BudgetItem
+import com.aubynsamuel.expensetracker.data.model.BudgetTotals
 import com.aubynsamuel.expensetracker.data.repository.BudgetRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,9 +36,11 @@ class BudgetViewModel(private val budgetRepository: BudgetRepository) : ViewMode
         }
     }
 
-    fun getBudgetTotal(budgetId: Int): Flow<Double> {
+    fun getBudgetTotals(budgetId: Int): Flow<BudgetTotals> {
         return budgetRepository.getBudgetItems(budgetId).map { items ->
-            items.sumOf { it.price }
+            val total = items.sumOf { it.price }
+            val checkedTotal = items.filter { it.isChecked }.sumOf { it.price }
+            BudgetTotals(total, checkedTotal)
         }
     }
 

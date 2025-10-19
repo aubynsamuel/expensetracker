@@ -1,6 +1,7 @@
 package com.aubynsamuel.expensetracker.presentation.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,9 +30,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.Budget
+import com.aubynsamuel.expensetracker.data.model.BudgetTotals
 import com.aubynsamuel.expensetracker.presentation.components.AddBudgetDialog
 import com.aubynsamuel.expensetracker.presentation.components.BudgetItem
 import com.aubynsamuel.expensetracker.presentation.components.EditBudgetDialog
@@ -165,33 +168,42 @@ fun BudgetsScreen(
                 }
             }
 
-            LazyColumn(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(
-                    top = 16.dp,
-                    bottom = paddingValues.calculateBottomPadding() + 10.dp
-                ),
-            ) {
-                items(filteredBudgets) { budget ->
-                    val totalAmount by budgetViewModel.getBudgetTotal(budget.id)
-                        .collectAsState(initial = 0.0)
-                    BudgetItem(
-                        budget = budget,
-                        onEdit = {
-                            budgetToEdit = it
-                            showEditBudgetDialog = true
-                        },
-                        onDelete = {
-                            budgetToDelete = it
-                            showDeleteDialog = true
-                        },
-                        onClick = {
-                            navigateToBudgetDetails(budget.id)
-                        },
-                        onUpdate = { budgetViewModel.updateBudget(it) },
-                        totalAmount = totalAmount
-                    )
+            if (filteredBudgets.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "No budgets to display.")
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(
+                        top = 16.dp,
+                        bottom = paddingValues.calculateBottomPadding() + 10.dp
+                    ),
+                ) {
+                    items(filteredBudgets) { budget ->
+                        val budgetTotals by budgetViewModel.getBudgetTotals(budget.id)
+                            .collectAsState(BudgetTotals(0.0, 0.0))
+                        BudgetItem(
+                            budget = budget,
+                            onEdit = {
+                                budgetToEdit = it
+                                showEditBudgetDialog = true
+                            },
+                            onDelete = {
+                                budgetToDelete = it
+                                showDeleteDialog = true
+                            },
+                            onClick = {
+                                navigateToBudgetDetails(budget.id)
+                            },
+                            purchasedAmount = budgetTotals.checkedTotal,
+                            totalAmount = budgetTotals.total
+                        )
+                    }
                 }
             }
         }
