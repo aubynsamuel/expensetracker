@@ -1,39 +1,42 @@
 package com.aubynsamuel.expensetracker.presentation.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.aubynsamuel.expensetracker.data.mock.dummyBudgets
 import com.aubynsamuel.expensetracker.data.model.Budget
 import com.aubynsamuel.expensetracker.data.model.BudgetTotals
 import com.aubynsamuel.expensetracker.presentation.components.AddBudgetDialog
@@ -49,14 +52,14 @@ fun BudgetsScreen(
     goBack: () -> Unit,
     navigateToBudgetDetails: (Int) -> Unit,
 ) {
-    val budgetsList by budgetViewModel.budgetsList.collectAsState()
+//    val budgetsList by budgetViewModel.budgetsList.collectAsState()
+    val budgetsList = remember { dummyBudgets }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var budgetToDelete by remember { mutableStateOf<Budget?>(null) }
     var showEditBudgetDialog by remember { mutableStateOf(false) }
     var budgetToEdit by remember { mutableStateOf<Budget?>(null) }
     var showAddBudgetDialog by remember { mutableStateOf(false) }
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
-    val tabTitles = listOf("Today", "This Week", "This Month", "Past")
+    var selectedDateFilter by rememberSaveable { mutableStateOf("Today") }
 
     if (showDeleteDialog) {
         AlertDialog(
@@ -122,28 +125,59 @@ fun BudgetsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+
         ) {
-            TabRow(selectedTabIndex = selectedTabIndex) {
-                tabTitles.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = { Text(title) }
-                    )
-                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    selected = selectedDateFilter == "Today",
+                    onClick = {
+                        selectedDateFilter = "Today"
+                    },
+                    label = { Text("Today") },
+                    colors = chipColors()
+                )
+                FilterChip(
+                    selected = selectedDateFilter == "Week",
+                    onClick = {
+                        selectedDateFilter = "Week"
+                    },
+                    label = { Text("This Week") },
+                    colors = chipColors()
+                )
+                FilterChip(
+                    selected = selectedDateFilter == "Month",
+                    onClick = {
+                        selectedDateFilter = "Month"
+                    },
+                    label = { Text("This Month") },
+                    colors = chipColors()
+                )
+                FilterChip(
+                    selected = selectedDateFilter == "Past",
+                    onClick = {
+                        selectedDateFilter = "Past"
+                    },
+                    label = { Text("Past") },
+                    colors = chipColors()
+                )
             }
 
             val filteredBudgets = budgetsList.filter { budget ->
                 val calendar = Calendar.getInstance()
-                when (selectedTabIndex) {
-                    0 -> { // Today
+                when (selectedDateFilter) {
+                    "Today" -> { // Today
                         val todayStart =
                             calendar.apply { set(Calendar.HOUR_OF_DAY, 0) }.timeInMillis
                         val todayEnd = calendar.apply { set(Calendar.HOUR_OF_DAY, 23) }.timeInMillis
                         budget.startDate >= todayStart && budget.endDate <= todayEnd
                     }
 
-                    1 -> { // This Week
+                    "Week" -> { // This Week
                         val weekStart = calendar.apply {
                             set(
                                 Calendar.DAY_OF_WEEK,
@@ -154,14 +188,14 @@ fun BudgetsScreen(
                         budget.startDate >= weekStart && budget.endDate <= weekEnd
                     }
 
-                    2 -> { // This Month
+                    "Month" -> { // This Month
                         val monthStart =
                             calendar.apply { set(Calendar.DAY_OF_MONTH, 1) }.timeInMillis
                         val monthEnd = calendar.apply { add(Calendar.MONTH, 1) }.timeInMillis
                         budget.startDate >= monthStart && budget.endDate <= monthEnd
                     }
 
-                    3 -> { // Past
+                    "Past" -> { // Past
                         budget.endDate < Calendar.getInstance().timeInMillis
                     }
 
@@ -170,15 +204,27 @@ fun BudgetsScreen(
             }
 
             if (filteredBudgets.isEmpty()) {
-                Box(
+                Column(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "No budgets to display.")
+                    Text(
+                        text = "No budgets yet",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Tap + to add your first budget",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             } else {
                 LazyColumn(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.clip(
+                        shape = RoundedCornerShape(20.dp)
+                    ),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(
                         top = 16.dp,
