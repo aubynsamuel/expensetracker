@@ -174,27 +174,52 @@ fun BudgetsScreen(
                 val calendar = Calendar.getInstance()
                 when (selectedDateFilter) {
                     "Today" -> { // Today
-                        val todayStart =
-                            calendar.apply { set(Calendar.HOUR_OF_DAY, 0) }.timeInMillis
-                        val todayEnd = calendar.apply { set(Calendar.HOUR_OF_DAY, 23) }.timeInMillis
+                        val todayStart = Calendar.getInstance().apply {
+                            set(Calendar.HOUR_OF_DAY, 0)
+                            set(Calendar.MINUTE, 0)
+                            set(Calendar.SECOND, 0)
+                            set(Calendar.MILLISECOND, 0)
+                        }.timeInMillis
+                        val todayEnd = Calendar.getInstance().apply {
+                            set(Calendar.HOUR_OF_DAY, 23)
+                            set(Calendar.MINUTE, 59)
+                            set(Calendar.SECOND, 59)
+                            set(Calendar.MILLISECOND, 999)
+                        }.timeInMillis
                         budget.startDate >= todayStart && budget.endDate <= todayEnd
                     }
 
                     "Week" -> { // This Week
-                        val weekStart = calendar.apply {
-                            set(
-                                Calendar.DAY_OF_WEEK,
-                                firstDayOfWeek
-                            )
+                        val weekStart = Calendar.getInstance().apply {
+                            firstDayOfWeek = calendar.firstDayOfWeek
+                            set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
+                            set(Calendar.HOUR_OF_DAY, 0)
+                            set(Calendar.MINUTE, 0)
+                            set(Calendar.SECOND, 0)
+                            set(Calendar.MILLISECOND, 0)
                         }.timeInMillis
-                        val weekEnd = calendar.apply { add(Calendar.WEEK_OF_YEAR, 1) }.timeInMillis
+                        val weekEnd = Calendar.getInstance().apply {
+                            firstDayOfWeek = calendar.firstDayOfWeek
+                            set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
+                            add(Calendar.WEEK_OF_YEAR, 1)
+                            add(Calendar.MILLISECOND, -1)
+                        }.timeInMillis
                         budget.startDate >= weekStart && budget.endDate <= weekEnd
                     }
 
                     "Month" -> { // This Month
-                        val monthStart =
-                            calendar.apply { set(Calendar.DAY_OF_MONTH, 1) }.timeInMillis
-                        val monthEnd = calendar.apply { add(Calendar.MONTH, 1) }.timeInMillis
+                        val monthStart = Calendar.getInstance().apply {
+                            set(Calendar.DAY_OF_MONTH, 1)
+                            set(Calendar.HOUR_OF_DAY, 0)
+                            set(Calendar.MINUTE, 0)
+                            set(Calendar.SECOND, 0)
+                            set(Calendar.MILLISECOND, 0)
+                        }.timeInMillis
+                        val monthEnd = Calendar.getInstance().apply {
+                            add(Calendar.MONTH, 1)
+                            set(Calendar.DAY_OF_MONTH, 1)
+                            add(Calendar.MILLISECOND, -1)
+                        }.timeInMillis
                         budget.startDate >= monthStart && budget.endDate <= monthEnd
                     }
 
