@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -56,6 +57,11 @@ android {
 dependencies {
     "baselineProfile"(project(":baselineprofile"))
     implementation(libs.androidx.profileinstaller)
+
+    //Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.hilt.lifecycle.viewmodel.compose)
 
     // Material Kolor
     implementation(libs.materialKolor)
