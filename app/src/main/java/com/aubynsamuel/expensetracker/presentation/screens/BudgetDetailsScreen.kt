@@ -254,3 +254,5 @@ fun BudgetDetailsScreen(
         }
     }
 }
+
+// TODO: Add items deletion

@@ -17,10 +17,8 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,7 +43,7 @@ fun BudgetItem(
     onEdit: (Budget) -> Unit,
     onDelete: (Budget) -> Unit,
     onClick: () -> Unit,
-    onUpdate: (Budget) -> Unit,
+    purchasedAmount: Double,
     totalAmount: Double,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -58,11 +56,12 @@ fun BudgetItem(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
-        Column {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -84,12 +83,14 @@ fun BudgetItem(
                             fontWeight = FontWeight.Bold
                         )
                     }
+
                     Column {
                         Text(
                             text = budget.name,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground
                         )
+
                         Text(
                             text = if (budget.isOneTime) {
                                 "One-time: ${
@@ -99,8 +100,14 @@ fun BudgetItem(
                                     ).format(Date(budget.startDate))
                                 }"
                             } else {
-                                budget.timeFrame
+                                "Time frame: ${budget.timeFrame}"
                             },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+
+                        Text(
+                            text = "Spent: $purchasedAmount / $totalAmount",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -110,42 +117,12 @@ fun BudgetItem(
                     Icon(Icons.Default.MoreVert, contentDescription = "More options")
                 }
             }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                LinearProgressIndicator(
-                    progress = if (totalAmount > 0) (totalAmount / 1000).toFloat() else 0f,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "$totalAmount / 1000",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = "Completed",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Checkbox(
-                            checked = budget.completed,
-                            onCheckedChange = { onUpdate(budget.copy(completed = it)) }
-                        )
-                    }
-                }
-            }
+
             AnimatedVisibility(expanded) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(top = 8.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
                     IconButton(onClick = { onEdit(budget) }) {
@@ -165,13 +142,13 @@ fun BudgetItem(
 fun BudgetItemPreview() {
     val budget = Budget(
         id = 1, name = "Groceries",
-        timeFrame = "",
-        startDate = 0,
-        endDate = 0
+        timeFrame = "Month",
+        startDate = 9120923023,
+        endDate = 91209232304
     )
     BudgetItem(
         budget = budget, onEdit = {}, onDelete = {}, onClick = {},
-        onUpdate = {},
+        purchasedAmount = 500.0,
         totalAmount = 1202.0
     )
 }
