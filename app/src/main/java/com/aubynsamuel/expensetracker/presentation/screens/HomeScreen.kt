@@ -209,7 +209,7 @@ fun HomeScreenContent(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Recent Transactions",
+                        text = "Recent Expenses",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
