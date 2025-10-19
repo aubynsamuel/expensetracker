@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.aubynsamuel.expensetracker.data.model.Budget
 import com.aubynsamuel.expensetracker.data.model.BudgetItem
 import com.aubynsamuel.expensetracker.data.repository.BudgetRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class BudgetViewModel(private val budgetRepository: BudgetRepository) : ViewModel() {
@@ -33,9 +35,29 @@ class BudgetViewModel(private val budgetRepository: BudgetRepository) : ViewMode
         }
     }
 
-    fun addBudget(name: String) {
+    fun getBudgetTotal(budgetId: Int): Flow<Double> {
+        return budgetRepository.getBudgetItems(budgetId).map { items ->
+            items.sumOf { it.price }
+        }
+    }
+
+    fun addBudget(
+        name: String,
+        isOneTime: Boolean,
+        timeFrame: String,
+        startDate: Long,
+        endDate: Long,
+    ) {
         viewModelScope.launch {
-            budgetRepository.insert(Budget(name = name))
+            budgetRepository.insert(
+                Budget(
+                    name = name,
+                    isOneTime = isOneTime,
+                    timeFrame = timeFrame,
+                    startDate = startDate,
+                    endDate = endDate
+                )
+            )
         }
     }
 
