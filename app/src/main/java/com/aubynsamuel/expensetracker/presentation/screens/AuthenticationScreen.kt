@@ -50,11 +50,11 @@ fun AuthenticationScreen(onUnlock: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Authenticate to continue",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-            )
+//            Text(
+//                text = "Authenticate to continue",
+//                style = MaterialTheme.typography.bodyLarge,
+//                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+//            )
 
             TextButton(onUnlock) {
                 Text("Unlock")

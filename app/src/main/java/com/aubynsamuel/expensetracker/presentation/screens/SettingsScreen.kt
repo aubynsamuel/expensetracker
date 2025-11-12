@@ -31,18 +31,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import com.aubynsamuel.expensetracker.BiometricAvailability
 import com.aubynsamuel.expensetracker.data.model.SettingsState
-import com.aubynsamuel.expensetracker.isBiometricAvailable
 import com.aubynsamuel.expensetracker.presentation.components.settings.ColorSchemePicker
 import com.aubynsamuel.expensetracker.presentation.components.settings.CurrencyPicker
 import com.aubynsamuel.expensetracker.presentation.components.settings.SettingItem
 import com.aubynsamuel.expensetracker.presentation.components.settings.SettingsCard
 import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
 import com.aubynsamuel.expensetracker.presentation.theme.ExpenseTrackerTheme
+import com.aubynsamuel.expensetracker.presentation.utils.BiometricAvailability
+import com.aubynsamuel.expensetracker.presentation.utils.isBiometricAvailable
+import com.aubynsamuel.expensetracker.presentation.utils.promptEnrollBiometric
 import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
-import com.aubynsamuel.expensetracker.promptEnrollBiometric
 import kotlinx.coroutines.Job
 
 @Composable
@@ -66,10 +66,6 @@ fun SettingsScreen(
                 when (isBiometricAvailable()) {
                     BiometricAvailability.AVAILABLE -> {
                         settingsViewModel.saveSettings(settingsState.copy(appLock = !settingsState.appLock))
-                        showToast(
-                            context,
-                            if (settingsState.appLock) "App lock enabled" else "App lock disabled"
-                        )
                     }
 
                     BiometricAvailability.NO_HARDWARE_UNSUPPORTED -> {
@@ -207,7 +203,7 @@ fun SettingsContent(
                 SettingItem(
                     title = "App Lock",
                     icon = Icons.Default.Fingerprint,
-                    subTitle = "Unlock with biometric",
+                    subTitle = "Unlock with biometrics",
                     onClick = { enableAppLock() },
                     checked = settingsState.appLock,
                     onCheckedChange = { enableAppLock() }
