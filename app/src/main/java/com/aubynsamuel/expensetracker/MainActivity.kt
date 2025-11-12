@@ -1,6 +1,10 @@
 package com.aubynsamuel.expensetracker
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -128,7 +132,7 @@ class MainActivity : FragmentActivity() {
 
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 Log.d("BiometricAuth", "No biometrics enrolled")
-                onFailure()
+                promptEnrollBiometric(this)
             }
 
             else -> {
@@ -177,8 +181,11 @@ class MainActivity : FragmentActivity() {
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Unlock Expensify")
             .setSubtitle("Authenticate to access your expenses")
-            .setNegativeButtonText("Cancel")
-            .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+//            .setNegativeButtonText("Cancel")
+            .setAllowedAuthenticators(
+                BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            )
             .build()
 
         biometricPrompt.authenticate(promptInfo)
@@ -220,6 +227,26 @@ private fun AuthenticationScreen() {
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
+        }
+    }
+}
+
+private fun promptEnrollBiometric(context: Context) {
+    try {
+        val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
+            putExtra(
+                Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
+                BiometricManager.Authenticators.BIOMETRIC_STRONG
+            )
+        }
+        if (context is FragmentActivity) {
+            context.startActivity(enrollIntent)
+        }
+    } catch (e: ActivityNotFoundException) {
+        // Fallback to a more generic settings screen
+        val fallbackIntent = Intent(Settings.ACTION_SECURITY_SETTINGS)
+        if (context is FragmentActivity) {
+            context.startActivity(fallbackIntent)
         }
     }
 }
