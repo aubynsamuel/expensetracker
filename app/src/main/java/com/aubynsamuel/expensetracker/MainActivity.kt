@@ -10,20 +10,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,10 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -42,6 +24,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import com.aubynsamuel.expensetracker.presentation.navigation.Navigation
+import com.aubynsamuel.expensetracker.presentation.screens.AuthenticationScreen
 import com.aubynsamuel.expensetracker.presentation.theme.ExpenseTrackerTheme
 import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
 import com.aubynsamuel.expensetracker.presentation.viewmodel.BudgetViewModel
@@ -75,34 +58,37 @@ class MainActivity : FragmentActivity() {
             var isAuthenticated by remember { mutableStateOf(false) }
             var showAuthPrompt by remember { mutableStateOf(true) }
 
+            fun authenticateUser() {
+                showAuthPrompt = false
+                authenticateUser(
+                    onSuccess = {
+                        isAuthenticated = true
+                    },
+                    onFailure = {
+//                                        finish()
+                    }
+                )
+            }
+
             WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
                 !settingsState.darkTheme
 
             CompositionLocalProvider(LocalSettingsState provides settingsState) {
                 ExpenseTrackerTheme(settingsState = settingsState) {
-                    if (isAuthenticated) {
+                    if (settingsState.appLock && !isAuthenticated) {
+                        AuthenticationScreen(onUnlock = { authenticateUser() })
+                        // Trigger biometric authentication
+                        if (showAuthPrompt) {
+                            LaunchedEffect(Unit) {
+                                authenticateUser()
+                            }
+                        }
+                    } else {
                         Navigation(
                             settingsViewModel = settingsViewModel,
                             expensesViewModel = expensesViewModel,
                             budgetViewModel = budgetViewModel
                         )
-                    } else {
-                        AuthenticationScreen()
-
-                        // Trigger biometric authentication
-                        if (showAuthPrompt) {
-                            LaunchedEffect(Unit) {
-                                showAuthPrompt = false
-                                authenticateUser(
-                                    onSuccess = {
-                                        isAuthenticated = true
-                                    },
-                                    onFailure = {
-                                        finish() // Close app if authentication fails
-                                    }
-                                )
-                            }
-                        }
                     }
                 }
             }
@@ -132,7 +118,7 @@ class MainActivity : FragmentActivity() {
 
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 Log.d("BiometricAuth", "No biometrics enrolled")
-                promptEnrollBiometric(this)
+                promptEnrollBiometric()
             }
 
             else -> {
@@ -181,10 +167,10 @@ class MainActivity : FragmentActivity() {
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Unlock Expensify")
             .setSubtitle("Authenticate to access your expenses")
-//            .setNegativeButtonText("Cancel")
             .setAllowedAuthenticators(
                 BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                        BiometricManager.Authenticators.DEVICE_CREDENTIAL or
+                        BiometricManager.Authenticators.BIOMETRIC_WEAK
             )
             .build()
 
@@ -192,46 +178,8 @@ class MainActivity : FragmentActivity() {
     }
 }
 
-@Composable
-private fun AuthenticationScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(32.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Fingerprint,
-                contentDescription = "Biometric Authentication",
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                text = "Expensify",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Authenticate to continue",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-            )
-        }
-    }
-}
-
-private fun promptEnrollBiometric(context: Context) {
+context(context: Context)
+fun promptEnrollBiometric() {
     try {
         val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
             putExtra(
@@ -242,11 +190,45 @@ private fun promptEnrollBiometric(context: Context) {
         if (context is FragmentActivity) {
             context.startActivity(enrollIntent)
         }
-    } catch (e: ActivityNotFoundException) {
-        // Fallback to a more generic settings screen
+    } catch (_: ActivityNotFoundException) {
         val fallbackIntent = Intent(Settings.ACTION_SECURITY_SETTINGS)
         if (context is FragmentActivity) {
             context.startActivity(fallbackIntent)
         }
     }
+}
+
+context(context: Context)
+fun isBiometricAvailable(): BiometricAvailability {
+    val biometricManager = BiometricManager.from(context)
+    return when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
+        BiometricManager.BIOMETRIC_SUCCESS -> BiometricAvailability.AVAILABLE
+        BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
+            Log.d("BiometricAuth", "No biometric hardware available.")
+            BiometricAvailability.NO_HARDWARE_UNSUPPORTED
+        }
+
+        BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
+            Log.d("BiometricAuth", "Biometric hardware unavailable.")
+            BiometricAvailability.BIOMETRICS_UNAVAILABLE
+        }
+
+        BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+            Log.d("BiometricAuth", "No biometrics enrolled.")
+            BiometricAvailability.NO_BIOMETRICS_ENROLLED
+        }
+
+        else -> {
+            Log.d("BiometricAuth", "Unknown biometric availability.")
+            BiometricAvailability.UNKNOWN
+        }
+    }
+}
+
+enum class BiometricAvailability {
+    AVAILABLE,
+    NO_HARDWARE_UNSUPPORTED,
+    BIOMETRICS_UNAVAILABLE,
+    NO_BIOMETRICS_ENROLLED,
+    UNKNOWN
 }
