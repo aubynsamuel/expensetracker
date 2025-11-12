@@ -31,8 +31,8 @@ interface BudgetDao {
     @Query(
         """
         SELECT
-            SUM(CASE WHEN bi.budgetId IS NOT NULL THEN bi.price ELSE 0 END) as total,
-            SUM(CASE WHEN bi.isChecked = 1 THEN bi.price ELSE 0 END) as checkedTotal
+            COALESCE(SUM(bi.price), 0) as total,
+            COALESCE(SUM(CASE WHEN bi.isChecked = 1 THEN bi.price ELSE 0 END), 0) as checkedTotal
         FROM budgets b
         LEFT JOIN budget_items bi ON b.id = bi.budgetId
         WHERE b.startDate >= :startOfMonth AND b.endDate <= :endOfMonth

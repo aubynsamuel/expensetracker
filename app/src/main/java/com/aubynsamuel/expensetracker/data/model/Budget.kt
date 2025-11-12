@@ -2,6 +2,7 @@ package com.aubynsamuel.expensetracker.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
@@ -22,4 +23,8 @@ data class Budget(
     @ColumnInfo(defaultValue = "0")
     val isOneTime: Boolean = false,
     val amount: Double? = null,
-)
+) {
+    @get:Ignore
+    val isExpired: Boolean
+        get() = endDate > 0 && System.currentTimeMillis() > endDate
+}
