@@ -4,7 +4,8 @@
 
 # Expensify
 
-A modern Android app for tracking and managing daily expenses, built with Jetpack Compose and
+A modern Android app for tracking and managing daily expenses and budgets, built with Jetpack
+Compose and
 Material 3.
 
 </div>
@@ -13,27 +14,32 @@ Material 3.
 
 <div align="center">
 
-<img src="screenShots/expensify-screenshot-home.webp" alt="App Screenshot - Home" width="300"/>
-<img src="screenShots/expensify-screenshot-home2.webp" alt="App Screenshot - Home2" width="300"/>
+<img src="screenShots/expensify-screenshot-home.webp" alt="App Screenshot - New Home Screen" width="300"/>
+<img src="screenShots/expensify-screenshot-home2.webp" alt="App Screenshot - Budgets" width="300"/>
 <img src="screenShots/expensify-screenshot-expenses.webp" alt="App Screenshot - Expenses" width="300"/>
 
 </div>
 
 ## Features
 
-- **Expense Management**: Add, edit, or delete expenses.
-- **Dashboard Overview**: View total spending, visualize expenses by category with a chart, and
-  track recent transactions at a glance.
-- **Custom Categories**: Use default categories or create your own for more flexible tracking.
-- **Expense History**: Browse your full transaction history and filter by day, week, or month.
+- **Comprehensive Dashboard**: Get a quick overview of your finances with a dashboard that
+  summarizes your total expenses and budget for the current month.
+- **Expense Management**: Easily add, edit, and delete expenses. View your transaction history and
+  filter by day, week, or month.
+- **Flexible Budgeting**:
+  - Create budgets with specific amounts or leave them open-ended.
+  - Set budgets to be one-time or recurring (daily, weekly, monthly).
+  - Track your spending against each budget with a detailed progress view.
+- **Custom Categories**: Use default expense categories or create your own for personalized
+  tracking.
 - **Personalized Theming**:
-  - Toggle between light, dark, or AMOLED-friendly black themes.
-  - Select a custom accent color to match your style.
+  - Choose between light, dark, or AMOLED-friendly black themes.
+  - Customize the app's color scheme to match your style.
 
 ## Tech Stack
 
 - **UI**: Jetpack Compose, Material 3
-- **Architecture**: MVVpM
+- **Architecture**: MVVM
 - **Database**: Room
 - **Theming**: [Material Kolor](https://github.com/material-kolor/material-kolor)
 - **Charts**: [Compose Charts](https://github.com/ehsannarmani/compose-charts)
