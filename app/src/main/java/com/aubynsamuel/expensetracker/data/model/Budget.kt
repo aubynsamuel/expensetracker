@@ -26,5 +26,7 @@ data class Budget(
 ) {
     @get:Ignore
     val isExpired: Boolean
-        get() = endDate > 0 && System.currentTimeMillis() > endDate
+        get() {
+            return endDate > 0 && System.currentTimeMillis() > endDate && !isOneTime
+        }
 }
