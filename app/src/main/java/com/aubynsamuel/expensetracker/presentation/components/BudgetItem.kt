@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.aubynsamuel.expensetracker.data.model.Budget
@@ -53,7 +55,9 @@ fun BudgetItem(
             .fillMaxWidth()
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = if (budget.completed) MaterialTheme.colorScheme.surfaceVariant.copy(
+                alpha = 0.4f
+            ) else MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
         Column(
@@ -67,7 +71,8 @@ fun BudgetItem(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.weight(1f)
                 ) {
                     Box(
                         modifier = Modifier
@@ -88,7 +93,8 @@ fun BudgetItem(
                         Text(
                             text = budget.name,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = MaterialTheme.colorScheme.onBackground,
+                            textDecoration = if (budget.completed) TextDecoration.LineThrough else null
                         )
 
                         Text(
@@ -113,8 +119,23 @@ fun BudgetItem(
                         )
                     }
                 }
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (budget.completed) {
+                        Icon(
+                            Icons.Default.Check,
+                            contentDescription = "Completed",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    } else if (budget.isExpired) {
+                        Text(
+                            text = "Expired",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                    }
                 }
             }
 
@@ -144,11 +165,12 @@ fun BudgetItemPreview() {
         id = 1, name = "Groceries",
         timeFrame = "Month",
         startDate = 9120923023,
-        endDate = 91209232304
+        endDate = 919291292939,
+        completed = true
     )
     BudgetItem(
         budget = budget, onEdit = {}, onDelete = {}, onClick = {},
         purchasedAmount = 500.0,
-        totalAmount = 1202.0
+        totalAmount = 1202.0,
     )
 }

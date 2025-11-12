@@ -171,9 +171,21 @@ fun BudgetsScreen(
                     label = { Text("Past") },
                     colors = chipColors()
                 )
+                FilterChip(
+                    selected = selectedDateFilter == "Completed",
+                    onClick = {
+                        selectedDateFilter = "Completed"
+                    },
+                    label = { Text("Completed") },
+                    colors = chipColors()
+                )
             }
 
             val filteredBudgets = budgetsList.filter { budget ->
+                if (selectedDateFilter == "Completed") {
+                    return@filter budget.completed
+                }
+
                 val calendar = Calendar.getInstance()
                 when (selectedDateFilter) {
                     "Today" -> { // Today
