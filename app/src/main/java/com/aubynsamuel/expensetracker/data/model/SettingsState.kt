@@ -9,4 +9,5 @@ data class SettingsState(
     val seedColor: Color = Color.White,
     val blackTheme: Boolean = true,
     val currency: String = "$",
+    val appLock: Boolean = false,
 )

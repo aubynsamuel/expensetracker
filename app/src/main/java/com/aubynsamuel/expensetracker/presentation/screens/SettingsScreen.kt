@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.NightlightRound
 import androidx.compose.material.icons.filled.NightsStay
@@ -27,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.aubynsamuel.expensetracker.data.model.SettingsState
@@ -36,6 +38,10 @@ import com.aubynsamuel.expensetracker.presentation.components.settings.SettingIt
 import com.aubynsamuel.expensetracker.presentation.components.settings.SettingsCard
 import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
 import com.aubynsamuel.expensetracker.presentation.theme.ExpenseTrackerTheme
+import com.aubynsamuel.expensetracker.presentation.utils.BiometricAvailability
+import com.aubynsamuel.expensetracker.presentation.utils.isBiometricAvailable
+import com.aubynsamuel.expensetracker.presentation.utils.promptEnrollBiometric
+import com.aubynsamuel.expensetracker.presentation.utils.showToast
 import com.aubynsamuel.expensetracker.presentation.viewmodel.SettingsViewModel
 import kotlinx.coroutines.Job
 
@@ -47,6 +53,7 @@ fun SettingsScreen(
     goBack: () -> Unit,
 ) {
     val settingsState by settingsViewModel.settingsState.collectAsState()
+    val context = LocalContext.current
 
     SettingsContent(
         settingsState = settingsState,
@@ -54,6 +61,41 @@ fun SettingsScreen(
         drawerState = drawerState,
         toggleDrawer = { toggleDrawer() },
         goBack = goBack,
+        enableAppLock = {
+            with(context) {
+                when (isBiometricAvailable()) {
+                    BiometricAvailability.AVAILABLE -> {
+                        settingsViewModel.saveSettings(settingsState.copy(appLock = !settingsState.appLock))
+                    }
+
+                    BiometricAvailability.NO_HARDWARE_UNSUPPORTED -> {
+                        showToast(
+                            context,
+                            "Biometrics not supported. This device lacks the required hardware."
+                        )
+                    }
+
+                    BiometricAvailability.BIOMETRICS_UNAVAILABLE -> {
+                        showToast(
+                            context,
+                            "Biometrics temporarily unavailable. Please try again later."
+                        )
+                    }
+
+                    BiometricAvailability.NO_BIOMETRICS_ENROLLED -> {
+                        showToast(context, "Please set up fingerprint lock to continue")
+                        promptEnrollBiometric()
+                    }
+
+                    BiometricAvailability.UNKNOWN -> {
+                        showToast(
+                            context,
+                            "An error occurred while checking biometric support."
+                        )
+                    }
+                }
+            }
+        }
     )
 }
 
@@ -64,6 +106,7 @@ fun SettingsContent(
     drawerState: DrawerState,
     goBack: () -> Unit,
     toggleDrawer: () -> Unit,
+    enableAppLock: () -> Unit,
 ) {
     BackHandler(
         enabled = drawerState == DrawerState.Opened,
@@ -154,6 +197,18 @@ fun SettingsContent(
                     onClick = { showCurrencyPickerDialog = true }
                 )
             }
+
+            SettingsCard(cardTitle = "Security") {
+                // Security
+                SettingItem(
+                    title = "App Lock",
+                    icon = Icons.Default.Fingerprint,
+                    subTitle = "Unlock with biometrics",
+                    onClick = { enableAppLock() },
+                    checked = settingsState.appLock,
+                    onCheckedChange = { enableAppLock() }
+                )
+            }
         }
     }
 }
@@ -163,9 +218,10 @@ fun SettingsContent(
 fun SettingsScreenPreview() {
     ExpenseTrackerTheme(settingsState = SettingsState()) {
         SettingsContent(
-            settingsState = SettingsState(), onStateChange = {}, goBack = {},
-            drawerState = DrawerState.Opened,
-            toggleDrawer = {}
+            settingsState = SettingsState(), onStateChange = {}, drawerState = DrawerState.Opened,
+            goBack = {},
+            toggleDrawer = {},
+            enableAppLock = {},
         )
     }
 }

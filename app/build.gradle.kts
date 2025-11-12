@@ -15,7 +15,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.aubynsamuel.expensetracker"
+        applicationId = "com.aubynsamuel.expensetracker.test"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -57,6 +57,8 @@ android {
 dependencies {
     "baselineProfile"(project(":baselineprofile"))
     implementation(libs.androidx.profileinstaller)
+
+    implementation(libs.androidx.biometric)
 
     //Hilt
     implementation(libs.hilt.android)

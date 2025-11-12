@@ -22,7 +22,8 @@ class SharedPreferencesManager(context: Context) {
             darkTheme = sharedPreferences.getBoolean(DARK_THEME_KEY, false),
             seedColor = seedColor,
             blackTheme = sharedPreferences.getBoolean(BLACK_THEME_KEY, true),
-            currency = sharedPreferences.getString(CURRENCY_KEY, "$") ?: "$"
+            currency = sharedPreferences.getString(CURRENCY_KEY, "$") ?: "$",
+            appLock = sharedPreferences.getBoolean(APP_LOCK_KEY, false)
         )
     }
 
@@ -32,6 +33,7 @@ class SharedPreferencesManager(context: Context) {
             putLong(SEED_COLOR_KEY, settingsState.seedColor.value.toLong())
             putBoolean(BLACK_THEME_KEY, settingsState.blackTheme)
             putString(CURRENCY_KEY, settingsState.currency)
+            putBoolean(APP_LOCK_KEY, settingsState.appLock)
         }
     }
 
@@ -57,6 +59,7 @@ class SharedPreferencesManager(context: Context) {
         const val SEED_COLOR_KEY = "seed_color"
         const val BLACK_THEME_KEY = "black_theme"
         const val CURRENCY_KEY = "currency"
+        const val APP_LOCK_KEY = "app_lock"
         const val CATEGORIES_KEY = "categories"
         val defaultCategories =
             setOf("Food", "Transport", "Shopping", "Bills", "Entertainment", "Health")
