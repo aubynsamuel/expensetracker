@@ -1,6 +1,5 @@
 package com.aubynsamuel.expensetracker.presentation.screens
 
-import SpendingChart
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +49,7 @@ import com.aubynsamuel.expensetracker.data.model.Expense
 import com.aubynsamuel.expensetracker.presentation.components.AddExpenseDialog
 import com.aubynsamuel.expensetracker.presentation.components.EditExpenseDialog
 import com.aubynsamuel.expensetracker.presentation.components.ExpenseItem
+import com.aubynsamuel.expensetracker.presentation.components.SpendingChart
 import com.aubynsamuel.expensetracker.presentation.navigation.DrawerState
 import com.aubynsamuel.expensetracker.presentation.navigation.Screen
 import com.aubynsamuel.expensetracker.presentation.theme.LocalSettingsState
